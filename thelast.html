@@ -1,0 +1,3096 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf--8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>School Score System</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+      :root {
+        --bg-main: #F8F9FA;
+        --bg-card: #FFFFFF;
+        --header-bg: #FFFFFF;
+        --sidebar-bg: #FFFFFF;
+        --border-color: #DEE2E6;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --primary-color: #0d6efd;
+        --primary-hover: #0b5ed7;
+        --accent-color: #ffc107;
+        --accent-hover: #ffca2c;
+        --success-bg: #d1e7dd;
+        --success-border: #badbcc;
+        --success-text: #0f5132;
+        --error-bg: #f8d7da;
+        --error-border: #f5c2c7;
+        --error-text: #842029;
+        --error-hover: #6a1a21;
+        --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.06);
+      }
+
+      /* Smooth Scrolling */
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 6rem;
+      }
+      
+      body {
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+        margin: 0px;
+        box-sizing: border-box;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        background-color: var(--header-bg);
+        color: var(--text-dark);
+        padding: 1rem 1.5rem;
+        box-shadow: none;
+        border-bottom: 1px solid var(--border-color);
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .logo {
+        font-size: clamp(1.25rem, 5vw, 1.5rem);
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .user-greeting {
+        font-size: clamp(13px, 3.5vw, 15px);
+        background-color: #e9ecef;
+        color: var(--text-dark);
+        padding: 6px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      #desktopNav, #preLoginNav {
+        display: none !important;
+      }
+      #mobileNav a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: clamp(14px, 4vw, 16px);
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+        white-space: wrap;
+      }
+      #mobileNav a:hover,
+      #mobileNav a:focus {
+        background-color: var(--primary-color);
+        color: #ffffff;
+        outline: none;
+      }
+      .mobile-menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        line-height: 0;
+        margin-right: 100px;
+      }
+      .mobile-menu-btn svg {
+        fill: var(--text-dark);
+      }
+      .mobile-nav {
+        position: absolute;
+        top: 100%;
+        margin-top: 12px;
+        right: calc(1.5rem + 100px);
+        width: 280px;
+        background-color: var(--bg-card);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        z-index: 1001;
+        max-height: calc(100vh - 90px);
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+      }
+      .mobile-nav a {
+        display: block;
+        padding: 12px 20px;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .mobile-nav a:last-child {
+        border-bottom: none;
+      }
+      footer {
+        background: var(--bg-card);
+        color: var(--text-light);
+        padding: 1.5rem 1rem;
+        text-align: center;
+        margin-top: auto;
+        border-top: 1px solid var(--border-color);
+      }
+      footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      footer a:hover,
+      footer a:focus {
+        text-decoration: underline;
+        outline: none;
+      }
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .sign-out-btn {
+        background: var(--error-text);
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: clamp(13px, 3.5vw, 15px);
+        font-weight: 600;
+        transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      }
+      .sign-out-btn:hover,
+      .sign-out-btn:focus {
+        background: var(--error-hover);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(132, 32, 41, 0.25);
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin: 1.5rem;
+        flex: 1;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .card {
+        background: var(--bg-card);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        width: 100%;
+        max-width: 1200px;
+        min-width: 280px;
+        box-sizing: border-box;
+        border: 1px solid var(--border-color);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow);
+      }
+      h1,
+      h2 {
+        margin: 4px 0 1rem 0;
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+      h3 {
+         margin: 1.5rem 0 1rem 0;
+         font-size: clamp(1.25rem, 4vw, 1.5rem);
+         font-weight: 600;
+         color: var(--primary-color);
+         border-bottom: 2px solid var(--border-color);
+         padding-bottom: 0.5rem;
+      }
+      label {
+        display: block;
+        margin-top: 1rem;
+        font-size: clamp(14px, 3.5vw, 16px);
+        font-weight: 500;
+        color: var(--text-light);
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 14px;
+        margin-top: 8px;
+        box-sizing: border-box;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        font-family: inherit;
+        font-size: clamp(14px, 3.5vw, 16px);
+        background-color: #fff;
+        color: var(--text-dark);
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        box-sizing: border-box;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: clamp(14px, 3.5vw, 16px);
+        font-weight: 600;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      button.primary {
+        background: var(--primary-color);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      button.primary:hover,
+      button.primary:focus {
+        background: var(--primary-hover);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+      }
+      button.primary:disabled {
+        background: #ced4da;
+        cursor: not-allowed;
+        color: var(--text-light);
+        box-shadow: none;
+        transform: none;
+      }
+      button.secondary {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+      button.secondary:hover,
+      button.secondary:focus {
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--primary-hover);
+        outline: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        text-align: left;
+        font-size: clamp(13px, 3vw, 15px);
+        white-space: wrap;
+      }
+      th {
+        background: var(--bg-main);
+        color: var(--text-dark);
+        font-weight: 600;
+        text-align: center;
+      }
+      tbody tr {
+        background-color: #fff;
+        transition: background-color 0.2s;
+      }
+      tbody tr:nth-child(even) {
+        background-color: var(--bg-main);
+      }
+      tbody tr:hover {
+        background-color: #f1f3f5;
+      }
+      td {
+        text-align: center;
+      }
+      tfoot th {
+        font-weight: bold;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+      }
+      .status-pass {
+        color: var(--success-text);
+        font-weight: bold;
+      }
+      .status-fail {
+        color: var(--error-text);
+        font-weight: bold;
+      }
+      .comment-block {
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        background: var(--bg-main);
+      }
+      .response {
+        background: rgba(13, 110, 253, 0.1);
+        padding: 1rem;
+        border-left: 4px solid var(--primary-color);
+        border-radius: 4px;
+        margin-top: 1rem;
+      }
+      .error-message,
+      .success-message {
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: 8px;
+        border: 1px solid;
+        display: none; /* Initially hidden */
+        font-weight: 500;
+      }
+      .error-message {
+        color: var(--error-text);
+        background-color: var(--error-bg);
+        border-color: var(--error-border);
+      }
+      .success-message {
+        color: var(--success-text);
+        background-color: var(--success-bg);
+        border-color: var(--success-border);
+      }
+      .inline {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .small-input {
+        width: clamp(100px, 30vw, 120px);
+      }
+      .login-container {
+        max-width: 450px;
+        margin: 8vh auto;
+        padding: 40px;
+        background: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        border-top: 5px solid var(--primary-color);
+      }
+      .login-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--text-dark);
+      }
+      .hidden {
+        display: none !important;
+      }
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 1.5rem;
+      }
+      .pagination button {
+        width: auto;
+        padding: 8px 12px;
+        border: 1px solid var(--primary-color);
+        background: transparent;
+        color: var(--primary-color);
+        cursor: pointer;
+        border-radius: 6px;
+      }
+       .pagination button:hover {
+        background: var(--primary-color);
+        color: #ffffff;
+      }
+      .pagination button:disabled {
+        background: #e9ecef;
+        color: var(--text-light);
+        border-color: var(--border-color);
+        cursor: not-allowed;
+      }
+      .search-bar {
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .search-bar input,
+      .search-bar select {
+        width: clamp(150px, 40vw, 200px);
+      }
+      .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      .checkbox-group label {
+        display: inline-flex;
+        align-items: center;
+        margin: 0;
+        gap: 0.5rem;
+      }
+
+      /* Dashboard Layout */
+      #adminPageContainer, #registrarPageContainer {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        padding: 1.5rem;
+        align-items: flex-start;
+      }
+
+      #adminSidebar, #registrarSidebar {
+        position: sticky;
+        top: 100px;
+        background-color: var(--sidebar-bg);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+      }
+      .admin-sidebar-link, .registrar-sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        color: var(--text-light);
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        border: none;
+        width: 100%;
+        background-color: transparent;
+        font-size: 15px;
+      }
+      .admin-sidebar-link:hover, .registrar-sidebar-link:hover {
+        background-color: #e9ecef;
+        color: var(--text-dark);
+      }
+      .admin-sidebar-link.active, .registrar-sidebar-link.active {
+        background-color: var(--primary-color);
+        color: #ffffff;
+        font-weight: 600;
+        box-shadow: none;
+      }
+       .admin-sidebar-link svg, .registrar-sidebar-link svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+      }
+      .admin-sidebar-link.active svg, .registrar-sidebar-link.active svg {
+        stroke: #ffffff;
+      }
+
+      #adminContent .card, #registrarContent .card {
+        margin-bottom: 2rem;
+      }
+      
+      .stat-card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .stat-card {
+        background-color: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        text-align: center;
+        border-top: 4px solid;
+      }
+      .stat-card h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        color: var(--text-light);
+      }
+      .stat-card p {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+
+      .score-controls {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+      .score-controls > div {
+        flex-grow: 1;
+        min-width: 150px;
+      }
+
+      @media (max-width: 1024px) {
+        #adminPageContainer, #registrarPageContainer {
+          grid-template-columns: 1fr;
+        }
+        #adminSidebar, #registrarSidebar {
+          position: static;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .container {
+          margin: 1rem;
+        }
+        .card {
+          min-width: 100%;
+          padding: 1.5rem;
+        }
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+        .inline {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .small-input {
+          width: 100%;
+        }
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        th,
+        td {
+          font-size: clamp(12px, 2.5vw, 14px);
+          padding: 0.75rem;
+        }
+      }
+      @media (max-width: 600px) {
+        body {
+          font-size: 14px;
+        }
+        header {
+          padding: 1rem 1.5rem;
+        }
+        .login-container {
+          margin: 20px 10px;
+          padding: 24px;
+        }
+        h1,
+        h2 {
+          font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+        }
+        .sign-out-btn {
+          width: 100%;
+          max-width: 200px;
+          margin: 0 auto;
+        }
+        .mobile-nav {
+            width: calc(100% - 3rem);
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+        .score-controls {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.15.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <!--==== Header ====-->
+    <header>
+      <div class="logo">School Score System</div>
+      <div class="header-controls">
+        <div class="user-greeting" id="userGreeting" aria-live="polite"></div>
+        <nav id="preLoginNav"></nav>
+        <nav id="desktopNav"></nav>
+        <button
+          id="mobileMenuBtn"
+          class="mobile-menu-btn"
+          aria-label="Toggle Menu"
+          aria-expanded="false"
+        >
+          <svg viewBox="0 0 100 80" width="25" height="25" fill="#2D3748">
+            <rect width="100" height="15" rx="8"></rect>
+            <rect y="30" width="100" height="15" rx="8"></rect>
+            <rect y="60" width="100" height="15" rx="8"></rect>
+          </svg>
+        </button>
+      </div>
+      <nav id="mobileNav" class="mobile-nav hidden"></nav>
+    </header>
+    <!--==== Login Page =====-->
+    <div id="loginPage" class="login-container">
+      <h1 class="login-title">System Login</h1>
+      <form id="loginForm" onsubmit="login(event)">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required aria-required="true" placeholder="Enter your username"/>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required aria-required="true" placeholder="Enter your password"/>
+        <div class="inline">
+          <button type="submit" class="primary" id="loginButton" style="margin-top: 20px;">Login</button>
+        </div>
+        <div
+          id="loginMessage"
+          class="error-message"
+          aria-live="assertive"
+        ></div>
+      </form>
+      <button onclick="showPage('changePasswordPage')" class="secondary" style="margin-top: 10px">
+        Change Password
+      </button>
+    </div>
+    <!--====== Change Password Page =====-->
+    <div id="changePasswordPage" class="login-container hidden">
+      <h1 class="login-title">Change Password</h1>
+      <form id="changePasswordForm" onsubmit="changePassword(event)">
+        <label for="changeUsername">Username:</label>
+        <input type="text" id="changeUsername" required aria-required="true" />
+        <label for="currentPassword">Current Password:</label>
+        <input
+          type="password"
+          id="currentPassword"
+          required
+          aria-required="true"
+        />
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" required aria-required="true" />
+        <label for="confirmPassword">Confirm New Password:</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          required
+          aria-required="true"
+        />
+        <div class="inline">
+          <button type="submit" class="primary">Change Password</button>
+        </div>
+        <div id="changePasswordMessage" class="error-message"></div>
+      </form>
+      <button
+        onclick="showPage('loginPage')"
+        class="secondary"
+        style="margin-top: 10px"
+      >
+        Back to Login
+      </button>
+    </div>
+    <!--===== Student Register Page (For internal use by Registrar) ========-->
+    <div id="registerPage" class="hidden">
+      <div class="top-bar">
+        <div>
+          <h1 id="studentRegisterTitle">Register New Student</h1>
+          <small>Grades 9 — 12</small>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card">
+          <h2 id="studentFormTitle">Register Student</h2>
+          <label for="firstName">First Name:</label>
+          <input
+            type="text"
+            id="firstName"
+            placeholder="First Name"
+            required
+            aria-required="true"
+          />
+          <label for="middleName">Middle Name:</label>
+          <input
+            type="text"
+            id="middleName"
+            placeholder="Middle Name"
+            required
+            aria-required="true"
+          />
+          <label for="lastName">Last Name:</label>
+          <input
+            type="text"
+            id="lastName"
+            placeholder="Last Name"
+            required
+            aria-required="true"
+          />
+          <label for="phone">Student Phone Number:</label>
+          <input
+            type="tel"
+            id="phone"
+            placeholder="Phone Number"
+            required
+            aria-required="true"
+          />
+          <label for="emergencyName">Emergency Contact Name:</label>
+          <input
+            type="text"
+            id="emergencyName"
+            placeholder="Emergency Contact"
+            required
+            aria-required="true"
+          />
+          <label for="emergencyPhone">Emergency Contact Phone:</label>
+          <input
+            type="tel"
+            id="emergencyPhone"
+            placeholder="Emergency Phone"
+            required
+            aria-required="true"
+          />
+           <label for="studentYear">Year:</label>
+            <input type="number" id="studentYear" placeholder="e.g., 2024" required aria-required="true" />
+            <label for="studentEmail">Email (Optional):</label>
+            <input type="email" id="studentEmail" placeholder="student@example.com" />
+            <label for="studentNationality">Nationality:</label>
+            <input type="text" id="studentNationality" placeholder="Nationality" required aria-required="true" />
+            <label for="studentRegion">Region:</label>
+            <input type="text" id="studentRegion" placeholder="Region" required aria-required="true" />
+            <label for="studentZone">Zone:</label>
+            <input type="text" id="studentZone" placeholder="Zone" required aria-required="true" />
+            <label for="studentDistrict">District/Sub-city:</label>
+            <input type="text" id="studentDistrict" placeholder="District or Sub-city" required aria-required="true" />
+            <label for="studentKebele">Kebele:</label>
+            <input type="text" id="studentKebele" placeholder="Kebele" required aria-required="true" />
+          <label for="gender">Student Gender:</label>
+          <select id="gender" required aria-required="true">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+          <label for="grade">Grade:</label>
+          <select
+            id="grade"
+            onchange="toggleStreamSelection()"
+            required
+            aria-required="true"
+          >
+            <option value="">Select Grade</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+          <label id="streamLabel" class="hidden" for="stream">Stream:</label>
+          <select id="stream" class="hidden">
+            <option value="">Select Stream</option>
+            <option value="Natural Science">Natural Science</option>
+            <option value="Social Science">Social Science</option>
+          </select>
+          <label for="section">Section:</label>
+          <select id="section" required aria-required="true"></select>
+          <button
+            id="registerBtn"
+            class="primary"
+            style="margin-top: 10px"
+            onclick="registerStudent()"
+          >
+            Register Student
+          </button>
+          <div id="registerMsg" class="success-message"></div>
+        </div>
+      </div>
+    </div>
+    <!--===== Teacher Register Page (For internal use by Admin) ========-->
+    <div id="teacherRegisterPage" class="hidden">
+      <div class="top-bar">
+        <div>
+          <h1 id="teacherRegisterPageTitle">Register New Teacher</h1>
+          <small>Teacher Registration Panel</small>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card">
+          <h2 id="teacherRegisterTitle">Register New Teacher</h2>
+          <label for="teacherFirstName">First Name:</label>
+          <input type="text" id="teacherFirstName" placeholder="First Name" required aria-required="true" />
+          <label for="teacherMiddleName">Middle Name:</label>
+          <input type="text" id="teacherMiddleName" placeholder="Middle Name" required aria-required="true" />
+          <label for="teacherLastName">Last Name:</label>
+          <input type="text" id="teacherLastName" placeholder="Last Name" required aria-required="true" />
+          <label for="teacherPhone">Phone Number:</label>
+          <input type="tel" id="teacherPhone" placeholder="Phone Number" required aria-required="true" />
+          <label for="teacherYear">Year:</label>
+          <input type="number" id="teacherYear" placeholder="e.g., 2024" required aria-required="true" />
+          <label for="teacherEmail">Email (Optional):</label>
+          <input type="email" id="teacherEmail" placeholder="teacher@example.com" />
+          <label for="teacherNationality">Nationality:</label>
+          <input type="text" id="teacherNationality" placeholder="Nationality" required aria-required="true" />
+          <label for="teacherRegion">Region:</label>
+          <input type="text" id="teacherRegion" placeholder="Region" required aria-required="true" />
+          <label for="teacherZone">Zone:</label>
+          <input type="text" id="teacherZone" placeholder="Zone" required aria-required="true" />
+          <label for="teacherDistrict">District/Sub-city:</label>
+          <input type="text" id="teacherDistrict" placeholder="District or Sub-city" required aria-required="true" />
+          <label for="teacherKebele">Kebele:</label>
+          <input type="text" id="teacherKebele" placeholder="Kebele" required aria-required="true" />
+          <label for="teacherGender">Gender:</label>
+          <select id="teacherGender" required aria-required="true">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+          <label for="teacherSubjectSpecialty">Subject Specialty:</label>
+          <select id="teacherSubjectSpecialty" required aria-required="true" onchange="updateTeacherSections()"></select>
+          <label>Grade and Section Assignments:</label>
+          <div id="gradeSectionPairs">
+            <div class="grade-section-pair">
+              <label>Grade(s):</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="teacherGrade0" value="9" onchange="updateTeacherSections()" /> Grade 9</label>
+                <label><input type="checkbox" name="teacherGrade0" value="10" onchange="updateTeacherSections()" /> Grade 10</label>
+                <label><input type="checkbox" name="teacherGrade0" value="11" onchange="updateTeacherSections()" /> Grade 11</label>
+                <label><input type="checkbox" name="teacherGrade0" value="12" onchange="updateTeacherSections()" /> Grade 12</label>
+              </div>
+              <label id="streamLabel0" class="hidden">Stream for Grade 11/12:</label>
+              <select id="stream0" class="hidden" onchange="updateTeacherSections()">
+                <option value="">Select Stream</option>
+                <option value="Natural Science">Natural Science</option>
+                <option value="Social Science">Social Science</option>
+              </select>
+              <label>Section(s):</label>
+              <div class="checkbox-group" id="teacherSection0"></div>
+              <button type="button" class="secondary" onclick="addGradeSectionPair()" style="margin-top: 5px">
+                Add Another Grade/Section
+              </button>
+            </div>
+          </div>
+          <button id="teacherRegisterBtn" class="primary" style="margin-top: 10px" onclick="registerTeacher()">
+            Register Teacher
+          </button>
+          <div id="teacherRegisterMsg" class="success-message"></div>
+        </div>
+      </div>
+    </div>
+    <!--===== Registrar Register Page ========-->
+    <div id="registrarRegisterPage" class="hidden">
+      <div class="top-bar">
+        <div>
+          <h1>Register New Registrar</h1>
+          <small>Registrar Registration Panel</small>
+        </div>
+        <div>
+          <button class="secondary" onclick="showPage('loginPage');" aria-label="Back to Login">Back to Login</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card">
+          <h2>Register New Registrar</h2>
+          <label for="registrarFirstName">First Name:</label>
+          <input type="text" id="registrarFirstName" placeholder="First Name" required aria-required="true" />
+          <label for="registrarMiddleName">Middle Name:</label>
+          <input type="text" id="registrarMiddleName" placeholder="Middle Name" required aria-required="true" />
+          <label for="registrarLastName">Last Name:</label>
+          <input type="text" id="registrarLastName" placeholder="Last Name" required aria-required="true" />
+          <label for="registrarPhone">Phone Number:</label>
+          <input type="tel" id="registrarPhone" placeholder="Phone Number" required aria-required="true" />
+          <label for="registrarYear">Year:</label>
+          <input type="number" id="registrarYear" placeholder="e.g., 2024" required aria-required="true" />
+          <label for="registrarEmail">Email (Optional):</label>
+          <input type="email" id="registrarEmail" placeholder="registrar@example.com" />
+          <label for="registrarNationality">Nationality:</label>
+          <input type="text" id="registrarNationality" placeholder="Nationality" required aria-required="true" />
+          <label for="registrarRegion">Region:</label>
+          <input type="text" id="registrarRegion" placeholder="Region" required aria-required="true" />
+          <label for="registrarZone">Zone:</label>
+          <input type="text" id="registrarZone" placeholder="Zone" required aria-required="true" />
+          <label for="registrarDistrict">District/Sub-city:</label>
+          <input type="text" id="registrarDistrict" placeholder="District or Sub-city" required aria-required="true" />
+          <label for="registrarKebele">Kebele:</label>
+          <input type="text" id="registrarKebele" placeholder="Kebele" required aria-required="true" />
+          <label for="registrarGender">Gender:</label>
+          <select id="registrarGender" required aria-required="true">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+          <button id="registrarRegisterBtn" class="primary" style="margin-top: 10px" onclick="registerRegistrar()">
+            Register Registrar
+          </button>
+          <div id="registrarRegisterMsg" class="success-message"></div>
+        </div>
+      </div>
+    </div>
+    <!--===== Teacher Dashboard ========-->
+    <div id="teacherPage" class="hidden">
+      <div class="top-bar">
+        <div>
+          <h1>Teacher Dashboard</h1>
+          <small
+            >Enter Scores • View Comments • Manage Students • Assign Behavior
+            Grades</small
+          >
+        </div>
+      </div>
+      <div class="container">
+        <div id="teacher-profile-section" class="card">
+          <h2>My Profile</h2>
+          <p>View your personal information.</p>
+          <button class="primary" style="margin-top: 10px" onclick="viewMyTeacherProfile()">
+            View My Profile
+          </button>
+          <div id="myTeacherProfileInfo" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+        </div>
+        <div id="enter-scores-section" class="card">
+          <div
+            id="teacherInfo"
+            style="
+              margin-bottom: 15px;
+              padding: 10px;
+              background-color: var(--bg-main);
+              border-radius: 6px;
+            "
+          ></div>
+          <h2>Enter/Update Scores</h2>
+          <label for="teacherGrade">Grade:</label>
+          <select id="teacherGrade" aria-label="Select Grade"></select>
+          <label for="teacherSection">Section:</label>
+          <select id="teacherSection" aria-label="Select Section"></select>
+          <label for="teacherSubject">Subject:</label>
+          <select id="teacherSubject" aria-label="Select Subject"></select>
+          <label for="teacherTerm">Term:</label>
+          <select id="teacherTerm" aria-label="Select Term">
+            <option>Term 1</option>
+            <option>Term 2</option>
+          </select>
+          <label for="teacherExam">Exam Type:</label>
+          <select id="teacherExam" aria-label="Select Exam Type">
+            <option>Assignment</option>
+            <option>Midterm</option>
+            <option>Final</option>
+            <option>Quiz</option>
+          </select>
+          <div id="studentScoresTableContainer" style="margin-top: 15px;"></div>
+          <div id="teacherMsg" class="success-message"></div>
+        </div>
+        <div id="assign-behavior-section" class="card">
+          <h2>Assign Behavior Grade</h2>
+          <label for="teacherBehaviorGrade">Grade:</label>
+          <select
+            id="teacherBehaviorGrade"
+            onchange="populateBehaviorStudentSelects()"
+            aria-label="Select Grade"
+          ></select>
+          <label for="teacherBehaviorSection">Section:</label>
+          <select
+            id="teacherBehaviorSection"
+            onchange="populateBehaviorStudentSelects()"
+            aria-label="Select Section"
+          ></select>
+          <label for="teacherBehaviorStudentSelect">Choose Student:</label>
+          <select
+            id="teacherBehaviorStudentSelect"
+            aria-label="Select Student"
+          ></select>
+          <label for="teacherBehaviorScore">Behavior Grade (A-E):</label>
+          <select id="teacherBehaviorScore" aria-label="Select Behavior Grade">
+            <option value="">Select Behavior Grade</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+          </select>
+          <label for="teacherBehaviorTerm">Term:</label>
+          <select id="teacherBehaviorTerm" aria-label="Select Term">
+            <option>Term 1</option>
+            <option>Term 2</option>
+          </select>
+          <button
+            id="submitBehaviorBtn"
+            class="primary"
+            style="margin-top: 10px"
+            onclick="submitBehaviorGrade()"
+          >
+            Submit/Update Behavior Grade
+          </button>
+          <div id="teacherBehaviorMsg" class="success-message"></div>
+        </div>
+        <div id="pending-comments-section" class="card">
+          <h2>Pending Comments</h2>
+          <div id="teacherCommentsContainer"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Student Dashboard -->
+    <div id="studentPage" class="hidden">
+      <div class="top-bar">
+        <div>
+          <h1>Student Dashboard</h1>
+          <small
+            >View Scores • Check Status • View Behavior • Communicate with
+            Teachers</small
+          >
+        </div>
+      </div>
+      <div class="container">
+        <div id="student-profile-section" class="card">
+          <h2>My Profile</h2>
+          <p>View your personal information.</p>
+          <button class="primary" style="margin-top: 10px" onclick="viewMyProfile()">
+            View My Profile
+          </button>
+          <div id="myStudentProfileInfo" class="hidden" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+        </div>
+        <div id="my-scores-section" class="card">
+          <h2>My Scores</h2>
+          <div class="score-controls">
+            <div>
+                <label for="viewYear">Year:</label>
+                <select id="viewYear" onchange="populateStudentGradeHistorySelect()" aria-label="Select Year"></select>
+            </div>
+            <div>
+              <label for="viewGrade">Grade:</label>
+              <select id="viewGrade" aria-label="Select Grade"></select>
+            </div>
+            <div>
+              <label for="viewTerm">Term:</label>
+              <select id="viewTerm" aria-label="Select Term">
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="All">All</option>
+              </select>
+            </div>
+          </div>
+          <button
+            id="viewScoresBtn"
+            class="primary"
+            style="margin-top: 10px"
+            onclick="viewScores()"
+          >
+            View Scores
+          </button>
+          <div id="scoresTable" style="margin-top: 14px"></div>
+          <button
+            id="exportScoresBtn"
+            class="secondary"
+            style="margin-top: 10px"
+            onclick="exportScores()"
+          >
+            Export Scores as CSV
+          </button>
+        </div>
+        <div id="my-behavior-section" class="card">
+          <h2>My Behavior Grades</h2>
+          <div class="score-controls">
+            <div>
+                <label for="viewBehaviorYear">Year:</label>
+                <select id="viewBehaviorYear" onchange="populateBehaviorGradeHistorySelect()" aria-label="Select Year"></select>
+            </div>
+            <div>
+                <label for="viewBehaviorGrade">Grade:</label>
+                <select id="viewBehaviorGrade" aria-label="Select Grade"></select>
+            </div>
+            <div>
+                <label for="viewBehaviorTerm">Term:</label>
+                <select id="viewBehaviorTerm" aria-label="Select Term">
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="All">All</option>
+                </select>
+            </div>
+          </div>
+          <button
+            id="viewBehaviorBtn"
+            class="primary"
+            style="margin-top: 10px"
+            onclick="viewBehaviorGrades()"
+          >
+            View Behavior Grades
+          </button>
+          <div id="behaviorTable" style="margin-top: 14px"></div>
+        </div>
+        <div id="send-comment-section" class="card">
+          <h2>Send Comment/Question</h2>
+          <label for="commentTeacher">Select Teacher:</label>
+          <select id="commentTeacher" aria-label="Select Teacher"></select>
+          <textarea
+            id="studentComment"
+            rows="3"
+            placeholder="Write your comment or question..."
+            aria-label="Enter Comment"
+          ></textarea>
+          <button
+            id="sendCommentBtn"
+            class="primary"
+            style="margin-top: 8px"
+            onclick="sendComment()"
+          >
+            Send Comment
+          </button>
+          <div id="studentCommentMsg" class="success-message"></div>
+          <h3 style="margin-top: 20px">My Comments</h3>
+          <div id="studentCommentsList"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Registrar Dashboard -->
+    <div id="registrarPage" class="hidden">
+        <div class="top-bar">
+            <div>
+                <h1>Registrar Dashboard</h1>
+                <small>Manage Student Registrations, Records, and Promotions</small>
+            </div>
+        </div>
+        <div id="registrarPageContainer">
+            <nav id="registrarSidebar"></nav>
+            <main id="registrarContent">
+                <div id="registrar-pending-students-section" class="card">
+                    <h2>Pending Student Registrations</h2>
+                    <div id="registrarPendingMsg" class="success-message"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Grade</th>
+                                <th>Section</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrarPendingStudentsTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="registrar-all-students-section" class="card hidden">
+                    <h2>All Students</h2>
+                    <div class="search-bar">
+                        <input type="text" id="registrarStudentSearch" placeholder="Search by ID or Name" oninput="renderStudentsTable(1, 'registrar')" />
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="registrarSelectAllStudents" onclick="toggleSelectAll('registrarStudentsTableBody', 'registrarSelectAllStudents')" /></th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Grade</th>
+                                <th>Section</th>
+                                <th>Phone</th>
+                                <th>Username</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrarStudentsTableBody"></tbody>
+                    </table>
+                    <div class="pagination" id="registrarStudentsPagination"></div>
+                    <button onclick="showPage('registerPage'); resetStudentForm();" class="primary" style="margin-top: 15px">Add New Student</button>
+                    <button onclick="deleteSelectedStudents('registrar')" class="secondary" style="margin-top: 15px">Delete Selected</button>
+                    <button onclick="exportStudents()" class="secondary" style="margin-top: 15px">Export Students as CSV</button>
+                </div>
+                <div id="registrar-promotion-section" class="card hidden">
+                    <h2>Student Promotion/Re-registration</h2>
+                    <p>Search for eligible students to promote or re-register them for the next academic year.</p>
+                    <form id="registrarPromotionSearchForm" onsubmit="event.preventDefault(); renderPromotionTable(true, 'registrar');">
+                        <div class="search-bar" style="margin-top: 15px; margin-bottom: 15px; align-items: flex-end;">
+                            <div style="flex-grow: 1;">
+                                <label for="registrarPromoStudentIdSearch">Student ID</label>
+                                <input type="text" id="registrarPromoStudentIdSearch" placeholder="Search by Student ID" aria-label="Search by Student ID" />
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <label for="registrarPromoGradeFilter">Grade</label>
+                                <select id="registrarPromoGradeFilter" onchange="togglePromoStreamFilter('registrar')" aria-label="Filter by Grade">
+                                    <option value="">All Grades</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <label for="registrarPromoSectionFilter">Section</label>
+                                <select id="registrarPromoSectionFilter" aria-label="Filter by Section"></select>
+                            </div>
+                            <div id="registrarPromoStreamFilterContainer" style="flex-grow: 1;" class="hidden">
+                                <label for="registrarPromoStreamFilter">Stream</label>
+                                <select id="registrarPromoStreamFilter" aria-label="Filter by Stream">
+                                    <option value="">All Streams</option>
+                                    <option value="Natural Science">Natural Science</option>
+                                    <option value="Social Science">Social Science</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="primary" style="margin-top: 6px;">Search</button>
+                            <button type="button" class="secondary" onclick="clearPromotionSearch('registrar')" style="margin-top: 6px;">Clear</button>
+                        </div>
+                    </form>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Current Grade/Section</th>
+                                <th>Overall Average</th>
+                                <th>Status</th>
+                                <th>Assign to New Section/Stream</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrarPromotionTableBody"></tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Admin Dashboard -->
+    <div id="adminPage" class="hidden">
+      <div id="adminPageContainer">
+        <nav id="adminSidebar"></nav>
+        <main id="adminContent">
+          <div id="admin-summary-section" class="card">
+            <h2>Dashboard Overview</h2>
+             <div class="stat-card-container">
+                <div class="stat-card" style="border-color: var(--primary-color);">
+                    <h4>Total Students</h4>
+                    <p id="totalStudentsStat">0</p>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent-color);">
+                    <h4>Total Teachers</h4>
+                    <p id="totalTeachersStat">0</p>
+                </div>
+                 <div class="stat-card" style="border-color: #4A5568;">
+                    <h4>Total Registrars</h4>
+                    <p id="totalRegistrarsStat">0</p>
+                </div>
+                <div class="stat-card" style="border-color: var(--error-text);">
+                    <h4>Pending Staff</h4>
+                    <p id="pendingRegStat">0</p>
+                </div>
+              </div>
+          </div>
+          <div id="pending-registrations-section" class="card hidden">
+            <h2>Pending Staff Registrations</h2>
+            <div id="pendingRegMsg" class="success-message"></div>
+            <h3>Teachers</h3>
+            <div id="pendingTeachersTableContainer">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>Assignments</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingTeachersTableBody"></tbody>
+              </table>
+            </div>
+             <h3 style="margin-top: 20px;">Registrars</h3>
+            <div id="pendingRegistrarsTableContainer">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingRegistrarsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="all-teachers-section" class="card hidden">
+            <h2>All Teachers</h2>
+            <div class="search-bar">
+              <input type="text" id="teacherSearch" placeholder="Search by ID or Name" oninput="renderTeachersTable(1)"/>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAllTeachers" onclick="toggleSelectAll('teachersTableBody', 'selectAllTeachers')"/></th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Subject</th>
+                  <th>Username</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teachersTableBody"></tbody>
+            </table>
+            <div class="pagination" id="teachersPagination"></div>
+            <button onclick="showPage('teacherRegisterPage'); resetTeacherForm();" class="primary" style="margin-top: 15px">Add New Teacher</button>
+            <button onclick="deleteSelectedTeachers()" class="secondary" style="margin-top: 15px">Delete Selected</button>
+            <button onclick="exportTeachers()" class="secondary" style="margin-top: 15px">Export Teachers as CSV</button>
+          </div>
+          <div id="all-registrars-section" class="card hidden">
+            <h2>All Registrars</h2>
+            <div class="search-bar">
+              <input type="text" id="registrarSearch" placeholder="Search by ID or Name" oninput="renderRegistrarsTable(1)"/>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAllRegistrars" onclick="toggleSelectAll('registrarsTableBody', 'selectAllRegistrars')"/></th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Username</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="registrarsTableBody"></tbody>
+            </table>
+            <div class="pagination" id="registrarsPagination"></div>
+            <button onclick="deleteSelectedRegistrars()" class="secondary" style="margin-top: 15px">Delete Selected</button>
+          </div>
+          <div id="all-students-section-admin" class="card hidden">
+            <h2>All Students</h2>
+            <div class="search-bar">
+              <input type="text" id="adminStudentSearch" placeholder="Search by ID or Name" oninput="renderAdminStudentsTable(1)"/>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="adminSelectAllStudents" onclick="toggleSelectAll('adminStudentsTableBody', 'adminSelectAllStudents')"/></th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Grade</th>
+                  <th>Section</th>
+                  <th>Phone</th>
+                  <th>Username</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminStudentsTableBody"></tbody>
+            </table>
+            <div class="pagination" id="adminStudentsPagination"></div>
+            <button onclick="deleteSelectedStudents('admin')" class="secondary" style="margin-top: 15px">Delete Selected</button>
+            <button onclick="exportStudents()" class="secondary" style="margin-top: 15px">Export Students as CSV</button>
+          </div>
+           <div id="user-details-section" class="card hidden">
+            <h2>User Details</h2>
+            <form id="userDetailsSearchForm" onsubmit="searchUserDetails(event)">
+              <div class="search-bar" style="margin-bottom: 15px; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    <label for="userDetailsType">User Type</label>
+                    <select id="userDetailsType" aria-label="Select User Type">
+                        <option value="">Select Type</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="registrar">Registrar</option>
+                    </select>
+                </div>
+                <div style="flex-grow: 2;">
+                    <label for="userDetailsSearch">Search by ID or Name</label>
+                    <input type="text" id="userDetailsSearch" placeholder="Enter ID or Name" aria-label="Search by ID or Name"/>
+                </div>
+                <button type="submit" class="primary" style="margin-top: 6px;">Search</button>
+              </div>
+            </form>
+            <div id="userDetailsContainer">
+                <p>Select a user type and enter a search query to see details.</p>
+            </div>
+          </div>
+          <div id="reset-password-section" class="card hidden">
+            <h2>Reset Password</h2>
+            <label for="resetUserType">User Type:</label>
+            <select id="resetUserType" onchange="populateResetUserSelect()">
+              <option value="">Select User Type</option>
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+              <option value="registrar">Registrar</option>
+            </select>
+            <label for="resetUserId">Select User:</label>
+            <select id="resetUserId"></select>
+            <label for="newResetPassword">New Password:</label>
+            <input type="password" id="newResetPassword" required aria-required="true"/>
+            <label for="confirmResetPassword">Confirm New Password:</label>
+            <input type="password" id="confirmResetPassword" required aria-required="true"/>
+            <button onclick="resetPassword()" class="primary" style="margin-top: 10px">Reset Password</button>
+            <div id="resetPasswordMsg" class="success-message"></div>
+          </div>
+          <div id="all-comments-section" class="card hidden">
+            <h2>All Comments</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student</th>
+                  <th>Teacher</th>
+                  <th>Comment</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="commentsTableBody"></tbody>
+            </table>
+            <div class="pagination" id="commentsPagination"></div>
+          </div>
+          <div id="system-settings-section" class="card hidden">
+            <h2>System Settings</h2>
+            <h3>Manage Sections</h3>
+            <div class="inline">
+              <input id="newSection" placeholder="Enter new section (e.g., I)" aria-label="New Section"/>
+              <button class="primary" onclick="addSection()" style="margin-top: 6px">Add Section</button>
+            </div>
+            <table style="margin-top: 10px">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="sectionsTableBody"></tbody>
+            </table>
+            <h3>Manage Subjects</h3>
+            <label for="subjectGrade">Grade:</label>
+            <select id="subjectGrade" onchange="updateSubjectTable()">
+              <option value="">Select Grade</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+            </select>
+            <label id="subjectStreamLabel" class="hidden" for="subjectStream">Stream:</label>
+            <select id="subjectStream" class="hidden" onchange="updateSubjectTable()">
+              <option value="">Select Stream</option>
+              <option value="Natural Science">Natural Science</option>
+              <option value="Social Science">Social Science</option>
+            </select>
+            <div class="inline">
+              <input id="newSubject" placeholder="Enter new subject" aria-label="New Subject"/>
+              <button class="primary" onclick="addSubject()" style="margin-top: 6px">Add Subject</button>
+            </div>
+            <table style="margin-top: 10px">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="subjectsTableBody"></tbody>
+            </table>
+            <div id="settingsMsg" class="success-message"></div>
+          </div>
+          <div id="gender-distribution-section" class="card hidden">
+            <h2>Student Reports</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Grade</th>
+                  <th>Section</th>
+                  <th>Male</th>
+                  <th>Female</th>
+                  <th>Total</th>
+                  <th>Passed</th>
+                  <th>Failed</th>
+                  <th>Pass Rate</th>
+                </tr>
+              </thead>
+              <tbody id="genderDistributionTableBody"></tbody>
+              <tfoot id="genderDistributionTableFooter"></tfoot>
+            </table>
+          </div>
+          <div id="permissions-section" class="card hidden">
+            <h2>System Permissions</h2>
+            <h3>Grant/Revoke System Access</h3>
+            <div class="checkbox-group">
+              <label><input type="checkbox" id="permStudentRegistration" onchange="updatePermissions()"/> Allow Student Creation (by Registrar)</label>
+              <label><input type="checkbox" id="permTeacherRegistration" onchange="updatePermissions()"/> Allow Teacher Creation (by Admin)</label>
+              <label><input type="checkbox" id="permRegistrarRegistration" onchange="updatePermissions()"/> Allow Public Registrar Registration</label>
+              <label><input type="checkbox" id="permScoreSubmission" onchange="updatePermissions()"/> Allow Score Submission</label>
+              <label><input type="checkbox" id="permBehaviorGrading" onchange="updatePermissions()"/> Allow Behavior Grading</label>
+              <label><input type="checkbox" id="permCommentSystem" onchange="updatePermissions()"/> Allow Comment System</label>
+              <label><input type="checkbox" id="permReportGeneration" onchange="updatePermissions()"/> Allow Report Generation</label>
+              <label><input type="checkbox" id="permUserManagement" onchange="updatePermissions()"/> Allow User Management</label>
+              <label><input type="checkbox" id="permSystemSettings" onchange="updatePermissions()"/> Allow System Settings</label>
+              <label><input type="checkbox" id="permDataExport" onchange="updatePermissions()"/> Allow Data Export</label>
+              <label><input type="checkbox" id="permPasswordReset" onchange="updatePermissions()"/> Allow Password Reset</label>
+              <label><input type="checkbox" id="permStudentProfileEdit" onchange="updatePermissions()"/> Allow Student Profile Editing</label>
+              <label><input type="checkbox" id="permTeacherProfileEdit" onchange="updatePermissions()"/> Allow Teacher Profile Editing</label>
+            </div>
+            <div class="inline" style="margin-top: 15px;">
+              <button class="primary" onclick="savePermissions()">Save Permissions</button>
+              <button class="secondary" onclick="resetPermissions()">Reset to Default</button>
+            </div>
+            <div id="permissionsMsg" class="success-message"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+      <p>&copy; <span id="copyright-year">2025</span> High School Registration and Result View System</p>
+      <p>
+        Contact:
+        <a href="mailto:support@schoolscoresystem.com"
+          >support@schoolscoresystem.com</a
+        >
+      </p>
+    </footer>
+    <script>
+      // Configuration
+      const config = {
+        gradeSubjects: JSON.parse(localStorage.getItem("gradeSubjects")) || {
+          9: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer", "Civics"],
+          10: ["Mathematics", "English", "Chemistry", "Biology", "Geography", "History", "Economics", "Computer", "PhysicalEducation"],
+          11: { "Natural Science": ["Mathematics", "Physics", "Chemistry", "Biology", "English", "Computer"], "Social Science": ["History", "Geography", "Economics", "English", "Civics", "Computer"] },
+          12: { "Natural Science": ["Mathematics", "Physics", "Chemistry", "Biology", "English", "Computer"], "Social Science": ["History", "Geography", "Business", "English", "Civics", "Computer"] },
+        },
+        defaultPasswords: { admin: "admin123", student: "student123", teacher: "teach123", registrar: "registrar123" },
+        sections: JSON.parse(localStorage.getItem("sections")) || ["A", "B", "C", "D", "E", "F", "G", "H"],
+        permissions: JSON.parse(localStorage.getItem("permissions")) || { studentRegistration: true, teacherRegistration: true, registrarRegistration: true, scoreSubmission: true, behaviorGrading: true, commentSystem: true, reportGeneration: true, userManagement: true, systemSettings: true, dataExport: true, passwordReset: true, studentProfileEdit: true, teacherProfileEdit: true },
+        pageSize: 10,
+      };
+      // Data Storage
+      const state = {
+        users: { admin: [{ username: "admin", password: config.defaultPasswords.admin, name: "System Admin" }] },
+        students: JSON.parse(localStorage.getItem("students")) || [],
+        teachers: JSON.parse(localStorage.getItem("teachers")) || [],
+        registrars: JSON.parse(localStorage.getItem("registrars")) || [{id: 3000, firstName: "Default", middleName: "I.", lastName: "Registrar", phone: "1234567890", year: new Date().getFullYear(), email: "registrar@example.com", nationality: "Default", region: "Default", zone: "Default", district: "Default", kebele: "01", gender: "Other", username: "registrar", password: config.defaultPasswords.registrar}],
+        pendingStudents: JSON.parse(localStorage.getItem("pendingStudents")) || [],
+        pendingTeachers: JSON.parse(localStorage.getItem("pendingTeachers")) || [],
+        pendingRegistrars: JSON.parse(localStorage.getItem("pendingRegistrars")) || [],
+        scores: JSON.parse(localStorage.getItem("scores")) || [],
+        comments: JSON.parse(localStorage.getItem("comments")) || [],
+        currentUser: JSON.parse(sessionStorage.getItem("currentUser")),
+        isEditingTeacher: false, teacherToEdit: null, gradeSectionPairs: [], isEditingStudent: false, studentToEdit: null,
+      };
+      // Utility Functions
+      function saveData() {
+        localStorage.setItem("students", JSON.stringify(state.students));
+        localStorage.setItem("teachers", JSON.stringify(state.teachers));
+        localStorage.setItem("registrars", JSON.stringify(state.registrars));
+        localStorage.setItem("pendingStudents", JSON.stringify(state.pendingStudents));
+        localStorage.setItem("pendingTeachers", JSON.stringify(state.pendingTeachers));
+        localStorage.setItem("pendingRegistrars", JSON.stringify(state.pendingRegistrars));
+        localStorage.setItem("scores", JSON.stringify(state.scores));
+        localStorage.setItem("comments", JSON.stringify(state.comments));
+        localStorage.setItem("gradeSubjects", JSON.stringify(config.gradeSubjects));
+        localStorage.setItem("sections", JSON.stringify(config.sections));
+        localStorage.setItem("permissions", JSON.stringify(config.permissions));
+      }
+      function showError(elementId, message) {
+        const el = document.getElementById(elementId);
+        if(!el) return;
+        el.className = "error-message";
+        el.style.display = "block";
+        el.textContent = message;
+        el.setAttribute("role", "alert");
+        setTimeout(() => { el.style.display = "none"; el.textContent = ""; }, 7000);
+      }
+      function clearMessage(elementId) {
+        const el = document.getElementById(elementId);
+        if(!el) return;
+        el.style.display = "none";
+        el.textContent = "";
+      }
+      function showSuccess(elementId, message) {
+        const el = document.getElementById(elementId);
+        if(!el) return;
+        el.className = "success-message";
+        el.style.display = "block";
+        el.textContent = message;
+        el.setAttribute("role", "alert");
+        setTimeout(() => { el.style.display = "none"; el.textContent = ""; }, 7000);
+      }
+      function showPage(pageId) {
+        document.querySelectorAll('[id$="Page"]').forEach((page) => page.classList.add("hidden"));
+        const targetPage = document.getElementById(pageId);
+        if(targetPage) { targetPage.classList.remove("hidden"); }
+        renderHeader();
+        if (pageId === "loginPage") { document.getElementById("username").focus(); }
+        if (pageId === "adminPage") { setupAdminView(); }
+        if (pageId === "registrarPage") { setupRegistrarView(); }
+        if (pageId === "studentPage" || pageId === "teacherPage") { initializeDashboard(); }
+        if (pageId === "registerPage" || pageId === "teacherRegisterPage" || pageId === "registrarRegisterPage") { populateSectionSelect(); populateSubjectSelect(); updateTeacherSections(); }
+      }
+      function nextId(array, start) { const ids = array.map((item) => item.id); return ids.length ? Math.max(...ids) + 1 : start; }
+      function findById(array, id) { return array.find((item) => Number(item.id) === Number(id)); }
+      function ordinal(n) { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+      function generateUsername(firstName, lastName, role, attempts = 0) {
+        if (attempts >= 20) { throw new Error("Unable to generate unique username"); }
+        const cleanFirst = firstName.toLowerCase().replace(/[^a-z]/g, "");
+        const cleanLast = lastName.toLowerCase().replace(/[^a-z]/g, "").slice(0, 3);
+        const randomNum = Math.floor(10000 + Math.random() * 90000);
+        const username = `${cleanFirst}.${cleanLast}${randomNum}`;
+        let existing = false;
+        if(role === "student") existing = state.students.some((s) => s.username === username);
+        if(role === "teacher") existing = state.teachers.some((t) => t.username === username);
+        if(role === "registrar") existing = state.registrars.some((r) => r.username === username);
+        return existing ? generateUsername(firstName, lastName, role, attempts + 1) : username;
+      }
+      function validatePhone(phone) { return /^\+?\d{10,15}$/.test(phone); }
+      function validateEmail(email) { if (!email) return true; return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function validatePassword(password) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password); }
+      function validateName(name) { return /^[a-zA-Z\s]+$/.test(name); }
+      function validateSection(section) { return /^[A-Z]$/.test(section); }
+      function validateSubject(subject) { return /^[a-zA-Z\s]+$/.test(subject); }
+      function toggleStreamSelection() {
+        const grade = document.getElementById("grade").value;
+        const streamLabel = document.getElementById("streamLabel");
+        const streamSelect = document.getElementById("stream");
+        if (grade === "11" || grade === "12") {
+          streamLabel.classList.remove("hidden");
+          streamSelect.classList.remove("hidden");
+          streamSelect.setAttribute("required", "true");
+        } else {
+          streamLabel.classList.add("hidden");
+          streamSelect.classList.add("hidden");
+          streamSelect.removeAttribute("required");
+          streamSelect.value = "";
+        }
+      }
+      function updateTeacherSections() {
+        const pairsContainer = document.getElementById("gradeSectionPairs");
+        if(!pairsContainer) return;
+        const pairs = pairsContainer.querySelectorAll(".grade-section-pair");
+        const subject = document.getElementById("teacherSubjectSpecialty").value;
+        state.gradeSectionPairs = [];
+        pairs.forEach((pair, index) => {
+          const sectionContainer = pair.querySelector(`#teacherSection${index}`);
+          if (!sectionContainer) return;
+          const currentlyCheckedSections = Array.from(sectionContainer.querySelectorAll(`input[name="teacherSection${index}"]:checked`)).map(input => input.value);
+          sectionContainer.innerHTML = config.sections.map(section => `<label><input type="checkbox" name="teacherSection${index}" value="${section}" ${currentlyCheckedSections.includes(section) ? 'checked' : ''} onchange="updateTeacherSections()"> Section ${section}</label>`).join("");
+          const grades = Array.from(pair.querySelectorAll(`input[name="teacherGrade${index}"]:checked`)).map((input) => Number(input.value));
+          const sections = Array.from(pair.querySelectorAll(`input[name="teacherSection${index}"]:checked`)).map((input) => input.value);
+          const streamSelect = pair.querySelector(`#stream${index}`);
+          const stream = streamSelect ? streamSelect.value : "";
+          if (grades.length === 0 || sections.length === 0) { return; }
+          grades.forEach((grade) => {
+            const applicableStream = grade >= 11 && stream ? stream : null;
+            sections.forEach((section) => {
+              if (!state.gradeSectionPairs.some((p) => p.grade === grade && p.section === section && p.stream === applicableStream)) {
+                state.gradeSectionPairs.push({ grade, section, subject, stream: applicableStream });
+              }
+            });
+          });
+          const streamLabel = pair.querySelector(`#streamLabel${index}`);
+          const streamSelectEl = pair.querySelector(`#stream${index}`);
+          if (grades.includes(11) || grades.includes(12)) {
+            streamLabel.classList.remove("hidden");
+            streamSelectEl.classList.remove("hidden");
+            if (!streamSelectEl.value) { streamSelectEl.setAttribute("required", "true"); }
+          } else {
+            streamLabel.classList.add("hidden");
+            streamSelectEl.classList.add("hidden");
+            streamSelectEl.removeAttribute("required");
+            streamSelectEl.value = "";
+          }
+        });
+        if (state.gradeSectionPairs.length === 0 && pairs.length > 0) { showError("teacherRegisterMsg", "Please select at least one valid grade and section."); }
+        else { clearMessage("teacherRegisterMsg"); }
+      }
+      function addGradeSectionPair() {
+        const pairsContainer = document.getElementById("gradeSectionPairs");
+        const index = pairsContainer.querySelectorAll(".grade-section-pair").length;
+        const pairDiv = document.createElement("div");
+        pairDiv.className = "grade-section-pair";
+        pairDiv.innerHTML = `<label>Grade(s):</label><div class="checkbox-group"><label><input type="checkbox" name="teacherGrade${index}" value="9" onchange="updateTeacherSections()"> Grade 9</label><label><input type="checkbox" name="teacherGrade${index}" value="10" onchange="updateTeacherSections()"> Grade 10</label><label><input type="checkbox" name="teacherGrade${index}" value="11" onchange="updateTeacherSections()"> Grade 11</label><label><input type="checkbox" name="teacherGrade${index}" value="12" onchange="updateTeacherSections()"> Grade 12</label></div><label id="streamLabel${index}" class="hidden">Stream for Grade 11/12:</label><select id="stream${index}" class="hidden" onchange="updateTeacherSections()"><option value="">Select Stream</option><option value="Natural Science">Natural Science</option><option value="Social Science">Social Science</option></select><label>Section(s):</label><div class="checkbox-group" id="teacherSection${index}">${config.sections.map((section) => `<label><input type="checkbox" name="teacherSection${index}" value="${section}" onchange="updateTeacherSections()"> Section ${section}</label>`).join("")}</div><button type="button" class="secondary" style="margin-top: 5px" onclick="removeGradeSectionPair(this)">Remove</button>`;
+        pairsContainer.appendChild(pairDiv);
+        updateTeacherSections();
+      }
+      function removeGradeSectionPair(button) { button.parentElement.remove(); updateTeacherSections(); }
+      function populateSectionSelect() {
+        const sectionSelects = document.querySelectorAll("#section, #registrarPromoSectionFilter");
+        sectionSelects.forEach(sel => {
+            if(!sel) return;
+            sel.innerHTML = '<option value="">Select Section</option>';
+            config.sections.forEach((section) => { sel.innerHTML += `<option value="${section}">Section ${section}</option>`; });
+        })
+      }
+      function populateSubjectSelect() {
+        const subjectSelect = document.getElementById("teacherSubjectSpecialty");
+        if(!subjectSelect) return;
+        subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+        const allSubjects = [...new Set([...config.gradeSubjects[9], ...config.gradeSubjects[10], ...config.gradeSubjects[11]["Natural Science"], ...config.gradeSubjects[11]["Social Science"], ...config.gradeSubjects[12]["Natural Science"], ...config.gradeSubjects[12]["Social Science"]])].sort();
+        allSubjects.forEach((subject) => { subjectSelect.innerHTML += `<option value="${subject}">${subject}</option>`; });
+      }
+      function getSubjectsForGradeLevel(grade, stream) {
+        if (!grade) return [];
+        if (grade >= 11) {
+            return config.gradeSubjects[grade]?.[stream] || [];
+        }
+        return config.gradeSubjects[grade] || [];
+      }
+      function calculateTermResults(studentId, term, grade, stream) {
+        const subjects = getSubjectsForGradeLevel(grade, stream);
+        const studentScores = state.scores.filter(s => s.studentId === studentId && s.term === term && s.grade === Number(grade) && s.examType !== "Behavior");
+        const results = { subjectDetails: {}, total: 0, average: 0, status: '' };
+        subjects.forEach(subject => {
+            const quiz = studentScores.find(s => s.subject === subject && s.examType === 'Quiz')?.score || 0;
+            const assignment = studentScores.find(s => s.subject === subject && s.examType === 'Assignment')?.score || 0;
+            const midterm = studentScores.find(s => s.subject === subject && s.examType === 'Midterm')?.score || 0;
+            const final = studentScores.find(s => s.subject === subject && s.examType === 'Final')?.score || 0;
+            const sum = Number(quiz) + Number(assignment) + Number(midterm) + Number(final);
+            results.subjectDetails[subject] = { quiz, assignment, midterm, final, sum };
+            results.total += sum;
+        });
+        if (subjects.length > 0) { results.average = results.total / subjects.length; }
+        results.status = results.average >= 50 ? 'Pass' : 'Fail';
+        return results;
+      }
+      function addSection() {
+        const newSection = document.getElementById("newSection").value.trim().toUpperCase();
+        if (!newSection) { showError("settingsMsg", "Please enter a section"); return; }
+        if (!validateSection(newSection)) { showError("settingsMsg", "Section must be a single uppercase letter"); return; }
+        if (config.sections.includes(newSection)) { showError("settingsMsg", "Section already exists"); return; }
+        if (!confirm(`Are you sure you want to add section ${newSection}?`)) return;
+        config.sections.push(newSection);
+        config.sections.sort();
+        saveData();
+        renderSectionsTable();
+        populateSectionSelect();
+        updateTeacherSections();
+        showSuccess("settingsMsg", `Section ${newSection} added successfully!`);
+        document.getElementById("newSection").value = "";
+      }
+      function removeSection(section) {
+        if (state.students.some((s) => s.section === section) || state.teachers.some((t) => t.gradeSectionPairs.some((p) => p.section === section))) {
+          showError("settingsMsg", "Cannot remove section in use by students or teachers");
+          return;
+        }
+        if (!confirm(`Are you sure you want to remove section ${section}?`)) return;
+        config.sections = config.sections.filter((s) => s !== section);
+        saveData();
+        renderSectionsTable();
+        populateSectionSelect();
+        updateTeacherSections();
+        showSuccess("settingsMsg", `Section ${section} removed successfully!`);
+      }
+      function renderSectionsTable() {
+        const tbody = document.getElementById("sectionsTableBody");
+        tbody.innerHTML = config.sections.map(section => `<tr><td>${section}</td><td><button class="primary" onclick="removeSection('${section}')">Remove</button></td></tr>`).join("");
+      }
+      function addSubject() {
+        const grade = document.getElementById("subjectGrade").value;
+        const stream = document.getElementById("subjectStream").value;
+        const newSubject = document.getElementById("newSubject").value.trim();
+        if (!grade || !newSubject || (grade >= 11 && !stream)) { showError("settingsMsg", "Please select a grade, stream (if applicable), and enter a subject"); return; }
+        if (!validateSubject(newSubject)) { showError("settingsMsg", "Subject can only contain letters and spaces"); return; }
+        let subjects;
+        if (grade >= 11) {
+          subjects = config.gradeSubjects[grade][stream] || [];
+          if (subjects.includes(newSubject)) { showError("settingsMsg", "Subject already exists for this grade and stream"); return; }
+        } else {
+          subjects = config.gradeSubjects[grade] || [];
+          if (subjects.includes(newSubject)) { showError("settingsMsg", "Subject already exists for this grade"); return; }
+        }
+        if (!confirm(`Are you sure you want to add subject ${newSubject} to Grade ${grade}${stream ? " (" + stream + ")" : ""}?`)) return;
+        if (grade >= 11) {
+          if (!config.gradeSubjects[grade][stream]) { config.gradeSubjects[grade][stream] = []; }
+          config.gradeSubjects[grade][stream].push(newSubject);
+          config.gradeSubjects[grade][stream].sort();
+        } else {
+          config.gradeSubjects[grade].push(newSubject);
+          config.gradeSubjects[grade].sort();
+        }
+        saveData();
+        updateSubjectTable();
+        populateSubjectSelect();
+        showSuccess("settingsMsg", `Subject ${newSubject} added successfully!`);
+        document.getElementById("newSubject").value = "";
+      }
+      function removeSubject(subject) {
+        const grade = document.getElementById("subjectGrade").value;
+        const stream = document.getElementById("subjectStream").value;
+        if (state.scores.some((s) => s.grade === Number(grade) && s.subject === subject && (!stream || s.stream === stream)) || state.teachers.some((t) => t.subjectSpecialty === subject && t.gradeSectionPairs.some((p) => p.grade === Number(grade) && (!stream || p.stream === stream)))) {
+          showError("settingsMsg", "Cannot remove subject in use by scores or teachers");
+          return;
+        }
+        if (!confirm(`Are you sure you want to remove subject ${subject} from Grade ${grade}${stream ? " (" + stream + ")" : ""}?`)) return;
+        if (grade >= 11) { config.gradeSubjects[grade][stream] = config.gradeSubjects[grade][stream].filter((s) => s !== subject); }
+        else { config.gradeSubjects[grade] = config.gradeSubjects[grade].filter((s) => s !== subject); }
+        saveData();
+        updateSubjectTable();
+        populateSubjectSelect();
+        showSuccess("settingsMsg", `Subject ${subject} removed successfully!`);
+      }
+      function updateSubjectTable() {
+        const grade = document.getElementById("subjectGrade").value;
+        const stream = document.getElementById("subjectStream").value;
+        const tbody = document.getElementById("subjectsTableBody");
+        const streamLabel = document.getElementById("subjectStreamLabel");
+        const streamSelect = document.getElementById("subjectStream");
+        tbody.innerHTML = "";
+        if (!grade) return;
+        if (grade >= 11) {
+          streamLabel.classList.remove("hidden");
+          streamSelect.classList.remove("hidden");
+          if (stream) {
+            const subjects = config.gradeSubjects[grade][stream] || [];
+            tbody.innerHTML = subjects.map(subject => `<tr><td>${subject}</td><td><button class="primary" onclick="removeSubject('${subject}')">Remove</button></td></tr>`).join("");
+          }
+        } else {
+          streamLabel.classList.add("hidden");
+          streamSelect.classList.add("hidden");
+          streamSelect.value = "";
+          const subjects = config.gradeSubjects[grade] || [];
+          tbody.innerHTML = subjects.map(subject => `<tr><td>${subject}</td><td><button class="primary" onclick="removeSubject('${subject}')">Remove</button></td></tr>`).join("");
+        }
+      }
+      function updatePermissions() {}
+      function savePermissions() {
+        config.permissions = {
+          studentRegistration: document.getElementById('permStudentRegistration').checked, teacherRegistration: document.getElementById('permTeacherRegistration').checked, registrarRegistration: document.getElementById('permRegistrarRegistration').checked, scoreSubmission: document.getElementById('permScoreSubmission').checked, behaviorGrading: document.getElementById('permBehaviorGrading').checked,
+          commentSystem: document.getElementById('permCommentSystem').checked, reportGeneration: document.getElementById('permReportGeneration').checked, userManagement: document.getElementById('permUserManagement').checked, systemSettings: document.getElementById('permSystemSettings').checked,
+          dataExport: document.getElementById('permDataExport').checked, passwordReset: document.getElementById('permPasswordReset').checked, studentProfileEdit: document.getElementById('permStudentProfileEdit').checked, teacherProfileEdit: document.getElementById('permTeacherProfileEdit').checked,
+        };
+        localStorage.setItem("permissions", JSON.stringify(config.permissions));
+        showSuccess("permissionsMsg", "Permissions updated successfully!");
+        renderHeader();
+      }
+      function resetPermissions() {
+        if (!confirm("Are you sure you want to reset all permissions to default?")) return;
+        config.permissions = { studentRegistration: true, teacherRegistration: true, registrarRegistration: true, scoreSubmission: true, behaviorGrading: true, commentSystem: true, reportGeneration: true, userManagement: true, systemSettings: true, dataExport: true, passwordReset: true, studentProfileEdit: true, teacherProfileEdit: true };
+        localStorage.setItem("permissions", JSON.stringify(config.permissions));
+        updatePermissionUI();
+        showSuccess("permissionsMsg", "Permissions reset to default!");
+        renderHeader();
+      }
+      function updatePermissionUI() {
+        Object.keys(config.permissions).forEach(key => {
+            const el = document.getElementById(`perm${key.charAt(0).toUpperCase() + key.slice(1)}`);
+            if (el) el.checked = config.permissions[key];
+        });
+      }
+      function showLoginPrompt(role) {
+        showPage('loginPage');
+        const msgEl = document.getElementById('loginMessage');
+        msgEl.className = 'success-message'; // Use a consistent class for styling
+        msgEl.style.backgroundColor = '#EBF8FF'; // Informational light blue
+        msgEl.style.borderColor = '#90CDF4'; // Blue border
+        msgEl.style.color = '#2C5282'; // Dark blue text
+        msgEl.textContent = `Please log in as an ${role} to access this page.`;
+        msgEl.style.display = 'block';
+      }
+      function renderHeader() {
+        const mobileNav = document.getElementById("mobileNav");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const greeting = document.getElementById("userGreeting");
+
+        mobileNav.innerHTML = "";
+
+        const createLink = (linkInfo) => {
+            const a = document.createElement("a");
+            a.textContent = linkInfo.text;
+            if (linkInfo.href) { a.href = linkInfo.href; }
+            if (linkInfo.onClick) { a.href = "javascript:void(0);"; a.onclick = linkInfo.onClick; }
+            a.addEventListener('click', () => { mobileNav.classList.add('hidden'); mobileMenuBtn.setAttribute('aria-expanded', 'false'); });
+            return a;
+        }
+
+        if (!state.currentUser) {
+            greeting.style.display = 'none';
+            
+            let navLinks = [
+                { text: "Register Student", onClick: () => { showPage("registerPage"); resetStudentForm(); } },
+                { text: "Register Teacher", onClick: () => { showPage("teacherRegisterPage"); resetTeacherForm(); } },
+            ];
+
+            if (config.permissions.registrarRegistration) {
+                navLinks.push({ text: "Register as Registrar", onClick: () => { showPage("registrarRegisterPage"); resetRegistrarForm(); } });
+            }
+            
+            navLinks.push({ text: "Login", onClick: () => showPage('loginPage') });
+
+            navLinks.forEach(linkInfo => {
+                mobileNav.appendChild(createLink(linkInfo));
+            });
+
+        } else {
+            greeting.style.display = 'block';
+            greeting.textContent = `Welcome, ${state.currentUser.name}`;
+            
+            const role = state.currentUser.role;
+            let primaryNavLinks = [];
+            let dashboardLinks = [];
+
+            if (role === "admin" && config.permissions.teacherRegistration) {
+                primaryNavLinks.push({ text: "Register Teacher", onClick: () => { showPage('teacherRegisterPage'); resetTeacherForm(); } });
+            }
+            if (role === "registrar" && config.permissions.studentRegistration) {
+                primaryNavLinks.push({ text: "Register Student", onClick: () => { showPage('registerPage'); resetStudentForm(); } });
+            }
+
+            if (role === "student") dashboardLinks = [{ text: "My Profile", href: "#student-profile-section"}, { text: "My Scores", href: "#my-scores-section" }, { text: "My Behavior Grades", href: "#my-behavior-section" }, { text: "Send Comment/Question", href: "#send-comment-section" }];
+            else if (role === "teacher") dashboardLinks = [{ text: "My Profile", href: "#teacher-profile-section"}, { text: "Enter/Update Scores", href: "#enter-scores-section" }, { text: "Assign Behavior Grade", href: "#assign-behavior-section" }, { text: "Pending Comments", href: "#pending-comments-section" }];
+            else if (role === "registrar") dashboardLinks = [{ text: "Pending Students", onClick: () => showRegistrarSection('registrar-pending-students-section')}, { text: "All Students", onClick: () => showRegistrarSection('registrar-all-students-section')}, { text: "Promotion", onClick: () => showRegistrarSection('registrar-promotion-section')}];
+            else if (role === "admin") {
+              dashboardLinks = [
+                  { text: "Dashboard", onClick: () => showAdminSection('admin-summary-section') },
+                  { text: "Pending Staff", onClick: () => showAdminSection('pending-registrations-section') },
+                  { text: "Teachers", onClick: () => showAdminSection('all-teachers-section') },
+                  { text: "Registrars", onClick: () => showAdminSection('all-registrars-section') },
+                  { text: "Students", onClick: () => showAdminSection('all-students-section-admin') },
+                  { text: "User Details", onClick: () => showAdminSection('user-details-section') },
+                  { text: "Comments", onClick: () => showAdminSection('all-comments-section') },
+                  { text: "Reports", onClick: () => showAdminSection('gender-distribution-section') },
+                  { text: "Settings", onClick: () => showAdminSection('system-settings-section') },
+                  { text: "Permissions", onClick: () => showAdminSection('permissions-section') },
+                  { text: "Reset Password", onClick: () => showAdminSection('reset-password-section') },
+              ];
+            }
+
+            const allMobileLinks = [...primaryNavLinks, ...dashboardLinks, { text: "Sign Out", onClick: signOut }];
+            allMobileLinks.forEach((link) => { mobileNav.appendChild(createLink(link)); });
+        }
+        
+        mobileMenuBtn.onclick = () => { const isHidden = mobileNav.classList.toggle("hidden"); mobileMenuBtn.setAttribute("aria-expanded", !isHidden); };
+      }
+      async function login(event) {
+        event.preventDefault();
+        const loginButton = document.getElementById("loginButton");
+        loginButton.disabled = true; loginButton.textContent = "Logging in..."; clearMessage("loginMessage");
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        let user; let role;
+        user = state.students.find(s => s.username === username && s.password === password); if (user) { role = 'student'; }
+        if (!user) { user = state.teachers.find(t => t.username === username && t.password === password); if (user) { role = 'teacher'; } }
+        if (!user) { user = state.registrars.find(r => r.username === username && r.password === password); if (user) { role = 'registrar'; } }
+        if (!user) { user = state.users.admin.find(u => u.username === username && u.password === password); if (user) { role = 'admin'; } }
+
+        if (user) {
+          state.currentUser = { role, id: user.id || null, username: user.username, name: user.name || `${user.firstName} ${user.middleName} ${user.lastName}`, grade: user.grade || null, section: user.section || null, stream: user.stream || null, subjectSpecialty: user.subjectSpecialty || null, gradeSectionPairs: user.gradeSectionPairs || null };
+          sessionStorage.setItem("currentUser", JSON.stringify(state.currentUser));
+          showSuccess("loginMessage", "Login successful! Redirecting...");
+          setTimeout(() => {
+            if (role === "student") showPage("studentPage");
+            else if (role === "teacher") showPage("teacherPage");
+            else if (role === "registrar") showPage("registrarPage");
+            else if (role === "admin") showPage("adminPage");
+            document.getElementById("loginForm").reset();
+            loginButton.disabled = false; loginButton.textContent = "Login";
+          }, 1000);
+        } else {
+          showError("loginMessage", "Invalid username or password");
+          document.getElementById("loginForm").reset(); document.getElementById("username").focus();
+          loginButton.disabled = false; loginButton.textContent = "Login";
+        }
+      }
+      function changePassword(event) {
+        event.preventDefault();
+        const username = document.getElementById("changeUsername").value.trim();
+        const currentPassword = document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        if (newPassword !== confirmPassword) { showError("changePasswordMessage", "New passwords do not match"); return; }
+        if (!validatePassword(newPassword)) { showError("changePasswordMessage", "New password must be at least 8 characters with letters and numbers"); return; }
+        let user;
+        if ((user = state.students.find((s) => s.username === username && s.password === currentPassword))) {}
+        else if ((user = state.teachers.find((t) => t.username === username && t.password === currentPassword))) {}
+        else if ((user = state.registrars.find((r) => r.username === username && r.password === currentPassword))) {}
+        else if ((user = state.users.admin.find((u) => u.username === username && u.password === currentPassword))) {}
+        
+        if (user) {
+          user.password = newPassword; saveData(); showSuccess("changePasswordMessage", "Password changed successfully!");
+          document.getElementById("changePasswordForm").reset();
+          if (state.currentUser && state.currentUser.username === username) { state.currentUser.password = newPassword; sessionStorage.setItem("currentUser", JSON.stringify(state.currentUser)); }
+        } else { showError("changePasswordMessage", "Invalid username or current password"); }
+      }
+      function resetPassword() {
+        const userType = document.getElementById("resetUserType").value;
+        const userId = document.getElementById("resetUserId").value;
+        const newPassword = document.getElementById("newResetPassword").value;
+        const confirmPassword = document.getElementById("confirmResetPassword").value;
+        if (!userType || !userId || !newPassword || !confirmPassword) { showError("resetPasswordMsg", "Please fill all required fields"); return; }
+        if (newPassword !== confirmPassword) { showError("resetPasswordMsg", "New passwords do not match"); return; }
+        if (!validatePassword(newPassword)) { showError("resetPasswordMsg", "New password must be at least 8 characters with letters and numbers"); return; }
+        let user;
+        if (userType === "student") user = findById(state.students, userId);
+        else if (userType === "teacher") user = findById(state.teachers, userId);
+        else if (userType === "registrar") user = findById(state.registrars, userId);
+
+        if (user) {
+          user.password = newPassword; saveData(); showSuccess("resetPasswordMsg", "Password reset successfully!");
+          document.getElementById("resetUserType").value = "";
+          document.getElementById("resetUserId").innerHTML = '<option value="">Select User</option>';
+          document.getElementById("newResetPassword").value = "";
+          document.getElementById("confirmResetPassword").value = "";
+        } else { showError("resetPasswordMsg", "User not found"); }
+      }
+      function populateResetUserSelect() {
+        const userType = document.getElementById("resetUserType").value;
+        const userSelect = document.getElementById("resetUserId");
+        userSelect.innerHTML = '<option value="">Select User</option>';
+        let users = [];
+        if (userType === "student") users = state.students.sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        else if (userType === "teacher") users = state.teachers.sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        else if (userType === "registrar") users = state.registrars.sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        
+        users.forEach((user) => { userSelect.innerHTML += `<option value="${user.id}">${user.id} — ${user.firstName} ${user.lastName}</option>`; });
+      }
+      function signOut() {
+        sessionStorage.removeItem("currentUser"); state.currentUser = null;
+        state.isEditingStudent = false; state.studentToEdit = null;
+        state.isEditingTeacher = false; state.teacherToEdit = null;
+        showPage("loginPage");
+        document.getElementById("loginForm").reset();
+        showSuccess("loginMessage", "Signed out successfully");
+      }
+      function populateStudentYearHistorySelect(yearSelectId, scoreFilterFn) {
+        const student = findById(state.students, state.currentUser.id);
+        if (!student) return;
+        const yearSelect = document.getElementById(yearSelectId);
+        if (!yearSelect) return;
+
+        const allStudentScores = state.scores.filter(s => s.studentId === student.id);
+        
+        let scoresToConsider = allStudentScores;
+        if (scoreFilterFn) {
+            scoresToConsider = scoresToConsider.filter(scoreFilterFn);
+        }
+
+        const yearSelectContainer = yearSelect.parentElement;
+
+        if (allStudentScores.length === 0) {
+            if (yearSelectContainer) yearSelectContainer.style.display = 'none';
+            return;
+        }
+        if (yearSelectContainer) yearSelectContainer.style.display = 'block';
+
+        
+        const minGradeOfAllTime = Math.min(...allStudentScores.map(s => s.grade));
+        
+        const academicYears = [...new Set(scoresToConsider.map(s => {
+            return student.year + (s.grade - minGradeOfAllTime);
+        }))].sort((a, b) => a - b);
+
+        yearSelect.innerHTML = '<option value="All">All Years</option>';
+        academicYears.forEach(year => {
+            yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+
+        if (academicYears.length > 0) {
+            yearSelect.value = academicYears[academicYears.length - 1];
+        }
+      }
+      function populateStudentGradeHistorySelect() {
+          const student = findById(state.students, state.currentUser.id);
+          if (!student) return;
+          const gradeSelect = document.getElementById("viewGrade");
+          const yearSelect = document.getElementById("viewYear");
+          if (!gradeSelect || !yearSelect) return;
+
+          const selectedYear = yearSelect.value;
+
+          const allStudentScores = state.scores.filter(s => s.studentId === student.id);
+          if (allStudentScores.length === 0) {
+              gradeSelect.innerHTML = `<option value="${student.grade}" selected>Grade ${student.grade}</option>`;
+              return;
+          }
+
+          const minGradeOfAllTime = Math.min(...allStudentScores.map(s => s.grade));
+          
+          let gradesToShow = new Set();
+          allStudentScores.forEach(score => {
+              if(score.subject === 'Behavior') return;
+              const academicYear = student.year + (score.grade - minGradeOfAllTime);
+              if (selectedYear === 'All' || academicYear == selectedYear) {
+                  gradesToShow.add(score.grade);
+              }
+          });
+
+          const currentGradeAcademicYear = student.year + (student.grade - minGradeOfAllTime);
+          if (selectedYear === 'All' || currentGradeAcademicYear == selectedYear) {
+              gradesToShow.add(student.grade);
+          }
+
+          const sortedGrades = [...gradesToShow].sort((a,b) => a - b);
+          
+          gradeSelect.innerHTML = '<option value="All">All Grades</option>';
+          sortedGrades.forEach(grade => {
+              const gradeIsCurrent = grade === student.grade;
+              const yearIsCurrent = selectedYear == currentGradeAcademicYear;
+              const isSelected = gradeIsCurrent && yearIsCurrent;
+              gradeSelect.innerHTML += `<option value="${grade}" ${isSelected ? 'selected' : ''}>Grade ${grade}</option>`;
+          });
+      }
+      function populateBehaviorGradeHistorySelect() {
+          const student = findById(state.students, state.currentUser.id);
+          if (!student) return;
+          const gradeSelect = document.getElementById("viewBehaviorGrade");
+          const yearSelect = document.getElementById("viewBehaviorYear");
+          if (!gradeSelect || !yearSelect) return;
+
+          const selectedYear = yearSelect.value;
+
+          const allStudentScores = state.scores.filter(s => s.studentId === student.id);
+          if (allStudentScores.length === 0) {
+              gradeSelect.innerHTML = `<option value="${student.grade}" selected>Grade ${student.grade}</option>`;
+              return;
+          }
+          
+          const behaviorScores = allStudentScores.filter(s => s.subject === 'Behavior');
+          const minGradeOfAllTime = Math.min(...allStudentScores.map(s => s.grade));
+          
+          let gradesToShow = new Set();
+          behaviorScores.forEach(score => {
+              const academicYear = student.year + (score.grade - minGradeOfAllTime);
+              if (selectedYear === 'All' || academicYear == selectedYear) {
+                  gradesToShow.add(score.grade);
+              }
+          });
+
+          const currentGradeAcademicYear = student.year + (student.grade - minGradeOfAllTime);
+          if (selectedYear === 'All' || currentGradeAcademicYear == selectedYear) {
+              gradesToShow.add(student.grade);
+          }
+
+          const sortedGrades = [...gradesToShow].sort((a,b) => a - b);
+          
+          gradeSelect.innerHTML = '<option value="All">All Grades</option>';
+          sortedGrades.forEach(grade => {
+              const gradeIsCurrent = grade === student.grade;
+              const yearIsCurrent = selectedYear == currentGradeAcademicYear;
+              const isSelected = gradeIsCurrent && yearIsCurrent;
+              gradeSelect.innerHTML += `<option value="${grade}" ${isSelected ? 'selected' : ''}>Grade ${grade}</option>`;
+          });
+      }
+      function initializeDashboard() {
+        if (!state.currentUser) { showPage("loginPage"); return; }
+        const role = state.currentUser.role;
+        if (role === "teacher") {
+          document.getElementById('teacher-profile-section').style.display = config.permissions.teacherProfileEdit ? '' : 'none';
+          const teacher = findById(state.teachers, state.currentUser.id);
+          if (teacher) {
+            document.getElementById("teacherInfo").innerHTML = `<p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.middleName} ${teacher.lastName}</p><p><strong>Specialty:</strong> ${teacher.subjectSpecialty}</p><p><strong>Assignments:</strong> ${teacher.gradeSectionPairs?.map(p => `G${p.grade} S${p.section}${p.stream ? ` (${p.stream.charAt(0)})` : ''}`).join(", ") || "None"}</p>`;
+            const teacherGradeEl = document.getElementById("teacherGrade");
+            const teacherSectionEl = document.getElementById("teacherSection");
+            const teacherBehaviorGradeEl = document.getElementById("teacherBehaviorGrade");
+            const teacherBehaviorSectionEl = document.getElementById("teacherBehaviorSection");
+            const grades = [...new Set(teacher.gradeSectionPairs?.map(p => p.grade))].sort((a, b) => a - b);
+            const sections = [...new Set(teacher.gradeSectionPairs?.map(p => p.section))].sort();
+            teacherGradeEl.innerHTML = grades.map((g) => `<option value="${g}">Grade ${g}</option>`).join(""); teacherGradeEl.value = grades[0] || "";
+            teacherSectionEl.innerHTML = '<option value="">Select Section</option>' + sections.map((s) => `<option value="${s}">Section ${s}</option>`).join(""); teacherSectionEl.value = sections[0] || "";
+            teacherBehaviorGradeEl.innerHTML = grades.map((g) => `<option value="${g}">Grade ${g}</option>`).join(""); teacherBehaviorGradeEl.value = grades[0] || "";
+            teacherBehaviorSectionEl.innerHTML = '<option value="">Select Section</option>' + sections.map((s) => `<option value="${s}">Section ${s}</option>`).join(""); teacherBehaviorSectionEl.value = sections[0] || "";
+            ['teacherGrade', 'teacherSection', 'teacherSubject', 'teacherTerm', 'teacherExam'].forEach(id => document.getElementById(id).addEventListener('change', renderStudentScoreTable));
+            fillTeacherSubjects(); renderStudentScoreTable(); populateBehaviorStudentSelects();
+          }
+          renderTeacherComments();
+        }
+        if (role === "student") {
+          document.getElementById('student-profile-section').style.display = config.permissions.studentProfileEdit ? '' : 'none';
+          populateCommentTeacherSelect();
+          renderStudentComments();
+          populateStudentYearHistorySelect('viewYear', s => s.subject !== 'Behavior');
+          populateStudentYearHistorySelect('viewBehaviorYear', s => s.subject === 'Behavior');
+          populateStudentGradeHistorySelect();
+          populateBehaviorGradeHistorySelect();
+        }
+      }
+      // ADMIN FUNCTIONS
+      function setupAdminView() {
+        renderAdminDashboard();
+        updateAdminSidebar();
+        showAdminSection('admin-summary-section');
+      }
+      function renderAdminDashboard() {
+        document.getElementById('totalStudentsStat').textContent = state.students.length;
+        document.getElementById('totalTeachersStat').textContent = state.teachers.length;
+        document.getElementById('totalRegistrarsStat').textContent = state.registrars.length;
+        document.getElementById('pendingRegStat').textContent = state.pendingTeachers.length + state.pendingRegistrars.length;
+        
+        renderPendingRegistrationsTable();
+        populateSubjectSelect();
+        renderTeachersTable(1);
+        renderRegistrarsTable(1);
+        renderAdminStudentsTable(1);
+        renderCommentsTable(1);
+        renderSectionsTable();
+        updateSubjectTable();
+        updatePermissionUI();
+        renderGenderDistributionTable();
+      }
+      function showAdminSection(sectionId) {
+        document.querySelectorAll('#adminContent .card').forEach(section => section.classList.add('hidden'));
+        const activeSection = document.getElementById(sectionId);
+        if (activeSection) activeSection.classList.remove('hidden');
+        document.querySelectorAll('.admin-sidebar-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.section === sectionId);
+        });
+      }
+      function updateAdminSidebar() {
+          const sidebar = document.getElementById('adminSidebar');
+          const sidebarLinks = [
+              { id: 'admin-summary-section', text: 'Dashboard', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>' },
+              { id: 'pending-registrations-section', text: 'Pending Staff', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' },
+              { id: 'all-teachers-section', text: 'Teachers', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>' },
+              { id: 'all-registrars-section', text: 'Registrars', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" /></svg>' },
+              { id: 'all-students-section-admin', text: 'Students', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M5.625 18.75a9.337 9.337 0 004.121.952A9.38 9.38 0 0013.125 18.75m-7.5 0a4.125 4.125 0 007.533 2.493m-7.533-2.493v-.003c0-1.113.285-2.16.786-3.07m2.397.052a6.375 6.375 0 01-.24-4.663a6.375 6.375 0 0111.964 0a6.375 6.375 0 01-.24 4.663m-11.484 0a4.125 4.125 0 01-7.533-2.493m7.533 2.493c.338-.972.5-2.042.5-3.125m2.397.052c.282.972.786 1.95.786 3.07m-2.397-.052c-.282.972-.786 1.95-.786 3.07" /></svg>' },
+              { id: 'user-details-section', text: 'User Details', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" /></svg>' },
+              { id: 'all-comments-section', text: 'Comments', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>' },
+              { id: 'gender-distribution-section', text: 'Reports', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>' },
+              { id: 'system-settings-section', text: 'Settings', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-1.007 1.11-1.226.55-.22 1.156-.22 1.706 0 .55.22 1.02.684 1.11 1.226l.08.481c.073.44.292.855.642 1.16.35.305.788.498 1.257.564l.478.068c.55.078 1.056.46 1.342 1.002.286.542.286 1.168 0 1.71l-.068.478c-.066.47-.26.907-.565 1.257-.305.35-.718.57-1.16.642l-.48.08c-.542.09-1.007.56-1.226 1.11-.22.55-.22 1.156 0 1.706.22.55.684 1.02 1.226 1.11l.48.08c.47.066.907.26 1.257.565.35.305.57.718.642 1.16l.08.48c.09.542-.292 1.056-1.002 1.342-.542.286-1.168.286-1.71 0l-.478-.068c-.47-.066-.907-.26-1.257-.565-.35-.305-.57-.718-.642-1.16l-.08-.48c-.09-.542-.56-1.007-1.11-1.226-.55-.22-1.156-.22-1.706 0-.55.22-1.02.684-1.11 1.226l-.08.481c-.073.44-.292.855-.642 1.16-.35.305-.788.498-1.257.564l-.478.068c-.55.078-1.056.46-1.342 1.002-.286.542-.286 1.168 0 1.71l.068.478c.066.47.26.907.565 1.257.305.35.718.57 1.16.642l.48.08c.542.09 1.007.56 1.226 1.11.22.55.22 1.156 0 1.706-.22.55-.684 1.02-1.226 1.11l-.48.08c-.47.066-.907.26-1.257-.565-.35-.305-.57-.718-.642-1.16l-.08-.48c-.09-.542.292-1.056 1.002-1.342.542-.286 1.168-.286 1.71 0l.478.068c.47.066.907.26 1.257.565.35.305.57.718.642 1.16l.08.48z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>' },
+              { id: 'permissions-section', text: 'Permissions', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" /></svg>' },
+              { id: 'reset-password-section', text: 'Reset Password', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.997-.527 1.563-.43A6 6 0 0121.75 12z" /></svg>' },
+          ];
+
+          sidebar.innerHTML = sidebarLinks.map(link => `
+              <button class="admin-sidebar-link" data-section="${link.id}" onclick="showAdminSection('${link.id}')">
+                  ${link.icon}
+                  <span>${link.text}</span>
+              </button>
+          `).join('');
+      }
+      // REGISTRAR FUNCTIONS
+      function setupRegistrarView() {
+        renderRegistrarDashboard();
+        updateRegistrarSidebar();
+        showRegistrarSection('registrar-pending-students-section');
+      }
+      function renderRegistrarDashboard() {
+        renderRegistrarPendingStudentsTable();
+        renderStudentsTable(1, 'registrar');
+        renderPromotionTable(false, 'registrar');
+        populatePromoSectionFilter('registrar');
+      }
+      function showRegistrarSection(sectionId) {
+        document.querySelectorAll('#registrarContent .card').forEach(section => section.classList.add('hidden'));
+        const activeSection = document.getElementById(sectionId);
+        if (activeSection) activeSection.classList.remove('hidden');
+        document.querySelectorAll('.registrar-sidebar-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.section === sectionId);
+        });
+      }
+      function updateRegistrarSidebar() {
+          const sidebar = document.getElementById('registrarSidebar');
+          const sidebarLinks = [
+              { id: 'registrar-pending-students-section', text: 'Pending Students', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' },
+              { id: 'registrar-all-students-section', text: 'All Students', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M5.625 18.75a9.337 9.337 0 004.121.952A9.38 9.38 0 0013.125 18.75m-7.5 0a4.125 4.125 0 007.533 2.493m-7.533-2.493v-.003c0-1.113.285-2.16.786-3.07m2.397.052a6.375 6.375 0 01-.24-4.663a6.375 6.375 0 0111.964 0a6.375 6.375 0 01-.24 4.663m-11.484 0a4.125 4.125 0 01-7.533-2.493m7.533 2.493c.338-.972.5-2.042.5-3.125m2.397.052c.282.972.786 1.95.786 3.07m-2.397-.052c-.282.972-.786 1.95-.786 3.07" /></svg>' },
+              { id: 'registrar-promotion-section', text: 'Promotion', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>' },
+          ];
+          sidebar.innerHTML = sidebarLinks.map(link => `
+              <button class="registrar-sidebar-link" data-section="${link.id}" onclick="showRegistrarSection('${link.id}')">
+                  ${link.icon}
+                  <span>${link.text}</span>
+              </button>
+          `).join('');
+      }
+      function renderRegistrarPendingStudentsTable() {
+        const pendingStudentsBody = document.getElementById("registrarPendingStudentsTableBody");
+        pendingStudentsBody.innerHTML = state.pendingStudents.map(s => `<tr><td>${s.firstName} ${s.lastName}</td><td>${s.grade}</td><td>${s.section}</td><td>${s.phone}</td><td><button class="primary" onclick="acceptStudent(${s.id})">Accept</button><button class="secondary" onclick="rejectStudent(${s.id})">Reject</button></td></tr>`).join('') || '<tr><td colspan="5">No pending student registrations.</td></tr>';
+      }
+      // REGISTRATION FUNCTIONS
+      function registerStudent() {
+        const studentData = {
+          firstName: document.getElementById("firstName").value.trim(), middleName: document.getElementById("middleName").value.trim(), lastName: document.getElementById("lastName").value.trim(),
+          phone: document.getElementById("phone").value.trim(), emergencyName: document.getElementById("emergencyName").value.trim(), emergencyPhone: document.getElementById("emergencyPhone").value.trim(),
+          year: document.getElementById("studentYear").value.trim(), email: document.getElementById("studentEmail").value.trim(), nationality: document.getElementById("studentNationality").value.trim(),
+          region: document.getElementById("studentRegion").value.trim(), zone: document.getElementById("studentZone").value.trim(), district: document.getElementById("studentDistrict").value.trim(),
+          kebele: document.getElementById("studentKebele").value.trim(), gender: document.getElementById("gender").value, grade: Number(document.getElementById("grade").value),
+          section: document.getElementById("section").value, stream: document.getElementById("stream").value,
+        };
+        if (!studentData.firstName || !studentData.middleName || !studentData.lastName || !studentData.phone || !studentData.emergencyName || !studentData.emergencyPhone || !studentData.gender || !studentData.grade || !studentData.section || !studentData.year || !studentData.nationality || !studentData.region || !studentData.zone || !studentData.district || !studentData.kebele || ((studentData.grade === 11 || studentData.grade === 12) && !studentData.stream)) {
+          showError("registerMsg", "Please fill all required fields"); return;
+        }
+        if (!validateName(studentData.firstName) || !validateName(studentData.middleName) || !validateName(studentData.lastName) || !validateName(studentData.emergencyName) || !validateName(studentData.nationality) || !validateName(studentData.region) || !validateName(studentData.zone) || !validateName(studentData.district)) {
+          showError("registerMsg", "Names and location fields can only contain letters and spaces"); return;
+        }
+        if (!validatePhone(studentData.phone) || !validatePhone(studentData.emergencyPhone)) { showError("registerMsg", "Phone numbers must be 10-15 digits long"); return; }
+        if (!validateEmail(studentData.email)) { showError("registerMsg", "Please enter a valid email address"); return; }
+
+        if (state.isEditingStudent && state.studentToEdit) {
+            const student = findById(state.students, state.studentToEdit.id);
+            if (!student) { showError("registerMsg", "Student not found for editing"); return; }
+            Object.assign(student, studentData);
+            saveData(); showSuccess("registerMsg", "Profile updated successfully!");
+            resetStudentForm();
+            showPage(`${state.currentUser.role}Page`);
+        } else {
+            // New registrations are added to a pending queue for registrar approval.
+            const pendingStudent = { id: Date.now(), ...studentData };
+            state.pendingStudents.push(pendingStudent);
+            saveData();
+            resetStudentForm();
+            showSuccess("registerMsg", "Student registration submitted successfully! It is now pending approval from the registrar.");
+            
+            // If a registrar is logged in, they are likely on the registrar page.
+            // Refresh their dashboard to show the new pending student.
+            if (state.currentUser && state.currentUser.role === 'registrar') {
+                renderRegistrarDashboard();
+            }
+        }
+      }
+      function resetStudentForm() {
+        const fields = ["firstName", "middleName", "lastName", "phone", "emergencyName", "emergencyPhone", "studentYear", "studentEmail", "studentNationality", "studentRegion", "studentZone", "studentDistrict", "studentKebele", "gender", "grade", "section", "stream"];
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+        toggleStreamSelection();
+        document.getElementById("studentFormTitle").textContent = "Register Student";
+        document.getElementById("registerBtn").textContent = "Register Student";
+        state.isEditingStudent = false; state.studentToEdit = null;
+      }
+      function viewMyProfile() {
+        const student = findById(state.students, state.currentUser.id);
+        const container = document.getElementById("myStudentProfileInfo");
+        if (!student || !container) { return; }
+        container.innerHTML = `<p><strong>ID:</strong> ${student.id}</p><p><strong>Grade:</strong> ${student.grade} - ${student.section} (${student.stream || "N/A"})</p><p><strong>Year:</strong> ${student.year || "N/A"}</p><p><strong>Gender:</strong> ${student.gender}</p><p><strong>Phone:</strong> ${student.phone}</p><p><strong>Email:</strong> ${student.email || "N/A"}</p><p><strong>Nationality:</strong> ${student.nationality || "N/A"}</p><p><strong>Address:</strong> ${student.region || "N/A"}, ${student.zone || "N/A"}, ${student.district || "N/A"}, Kebele ${student.kebele || "N/A"}</p><p><strong>Emergency Contact:</strong> ${student.emergencyName} (${student.emergencyPhone})</p><p><strong>Username:</strong> ${student.username}</p>`;
+        container.classList.toggle('hidden');
+      }
+      function editStudent(id) {
+        const student = findById(state.students, id);
+        if (!student) { return; }
+        state.isEditingStudent = true; state.studentToEdit = student;
+        const studentDataMap = {
+            firstName: student.firstName, middleName: student.middleName, lastName: student.lastName, phone: student.phone,
+            emergencyName: student.emergencyName, emergencyPhone: student.emergencyPhone, studentYear: student.year, studentEmail: student.email,
+            studentNationality: student.nationality, studentRegion: student.region, studentZone: student.zone, studentDistrict: student.district,
+            studentKebele: student.kebele, gender: student.gender, grade: student.grade, section: student.section, stream: student.stream,
+        };
+        Object.keys(studentDataMap).forEach(key => {
+            const el = document.getElementById(key);
+            if (el) el.value = studentDataMap[key] || "";
+        });
+        toggleStreamSelection();
+        document.getElementById("studentFormTitle").textContent = "Edit Student Profile";
+        document.getElementById("registerBtn").textContent = "Update Profile";
+        showPage("registerPage");
+      }
+      function registerTeacher() {
+        const teacherData = {
+            firstName: document.getElementById("teacherFirstName").value.trim(), middleName: document.getElementById("teacherMiddleName").value.trim(), lastName: document.getElementById("teacherLastName").value.trim(),
+            phone: document.getElementById("teacherPhone").value.trim(), year: document.getElementById("teacherYear").value.trim(), email: document.getElementById("teacherEmail").value.trim(),
+            nationality: document.getElementById("teacherNationality").value.trim(), region: document.getElementById("teacherRegion").value.trim(), zone: document.getElementById("teacherZone").value.trim(),
+            district: document.getElementById("teacherDistrict").value.trim(), kebele: document.getElementById("teacherKebele").value.trim(), gender: document.getElementById("teacherGender").value,
+            subjectSpecialty: document.getElementById("teacherSubjectSpecialty").value
+        };
+        if (!teacherData.firstName || !teacherData.middleName || !teacherData.lastName || !teacherData.gender || !teacherData.subjectSpecialty || !teacherData.phone || !teacherData.year || !teacherData.nationality || !teacherData.region || !teacherData.zone || !teacherData.district || !teacherData.kebele || state.gradeSectionPairs.length === 0) {
+          showError("teacherRegisterMsg", "Please fill all required fields and select at least one valid grade and section"); return;
+        }
+        if (!validateName(teacherData.firstName) || !validateName(teacherData.middleName) || !validateName(teacherData.lastName) || !validateName(teacherData.nationality) || !validateName(teacherData.region) || !validateName(teacherData.zone) || !validateName(teacherData.district)) {
+          showError("teacherRegisterMsg", "Names and location fields can only contain letters and spaces"); return;
+        }
+        if (!validatePhone(teacherData.phone)) { showError("teacherRegisterMsg", "Phone number must be 10-15 digits long"); return; }
+        if (!validateEmail(teacherData.email)) { showError("teacherRegisterMsg", "Please enter a valid email address"); return; }
+
+        if (state.isEditingTeacher && state.teacherToEdit) {
+            const teacher = findById(state.teachers, state.teacherToEdit.id);
+            if (!teacher) { showError("teacherRegisterMsg", "Teacher not found for editing"); return; }
+            Object.assign(teacher, teacherData);
+            teacher.gradeSectionPairs = [...state.gradeSectionPairs];
+            saveData();
+            showSuccess("teacherRegisterMsg", "Profile updated successfully!");
+            resetTeacherForm();
+            showPage(`${state.currentUser.role}Page`);
+        } else { // Direct creation by Admin
+            const teacher = { id: nextId(state.teachers, 2000), username: generateUsername(teacherData.firstName, teacherData.lastName, "teacher"), password: config.defaultPasswords.teacher, ...teacherData, gradeSectionPairs: [...state.gradeSectionPairs] };
+            state.teachers.push(teacher);
+            saveData();
+            resetTeacherForm();
+            showSuccess("teacherRegisterMsg", "Teacher registered successfully!");
+            renderTeachersTable(1);
+        }
+      }
+      function resetTeacherForm() {
+        const fields = ["teacherFirstName", "teacherMiddleName", "teacherLastName", "teacherPhone", "teacherYear", "teacherEmail", "teacherNationality", "teacherRegion", "teacherZone", "teacherDistrict", "teacherKebele", "teacherGender", "teacherSubjectSpecialty"];
+        fields.forEach(id => document.getElementById(id).value = "");
+        const pairsContainer = document.getElementById("gradeSectionPairs");
+        pairsContainer.innerHTML = `<div class="grade-section-pair"><label>Grade(s):</label><div class="checkbox-group"><label><input type="checkbox" name="teacherGrade0" value="9" onchange="updateTeacherSections()"> Grade 9</label><label><input type="checkbox" name="teacherGrade0" value="10" onchange="updateTeacherSections()"> Grade 10</label><label><input type="checkbox" name="teacherGrade0" value="11" onchange="updateTeacherSections()"> Grade 11</label><label><input type="checkbox" name="teacherGrade0" value="12" onchange="updateTeacherSections()"> Grade 12</label></div><label id="streamLabel0" class="hidden">Stream for Grade 11/12:</label><select id="stream0" class="hidden" onchange="updateTeacherSections()"><option value="">Select Stream</option><option value="Natural Science">Natural Science</option><option value="Social Science">Social Science</option></select><label>Section(s):</label><div class="checkbox-group" id="teacherSection0">${config.sections.map((section) => `<label><input type="checkbox" name="teacherSection0" value="${section}" onchange="updateTeacherSections()"> Section ${section}</label>`).join("")}</div><button type="button" class="secondary" onclick="addGradeSectionPair()" style="margin-top: 5px">Add Another Grade/Section</button></div>`;
+        state.gradeSectionPairs = [];
+        document.getElementById("teacherRegisterTitle").textContent = "Register New Teacher";
+        document.getElementById("teacherRegisterBtn").textContent = "Register Teacher";
+        state.isEditingTeacher = false; state.teacherToEdit = null;
+      }
+      function viewMyTeacherProfile() {
+        const teacher = findById(state.teachers, state.currentUser.id);
+        const container = document.getElementById("myTeacherProfileInfo");
+        if (!teacher || !container) return;
+        container.innerHTML = `<p><strong>ID:</strong> ${teacher.id}</p><p><strong>Year:</strong> ${teacher.year || "N/A"}</p><p><strong>Gender:</strong> ${teacher.gender}</p><p><strong>Phone:</strong> ${teacher.phone || "N/A"}</p><p><strong>Email:</strong> ${teacher.email || "N/A"}</p><p><strong>Nationality:</strong> ${teacher.nationality || "N/A"}</p><p><strong>Address:</strong> ${teacher.region || "N/A"}, ${teacher.zone || "N/A"}, ${teacher.district || "N/A"}, Kebele ${teacher.kebele || "N/A"}</p><p><strong>Subject Specialty:</strong> ${teacher.subjectSpecialty}</p><p><strong>Assignments:</strong> ${teacher.gradeSectionPairs?.map(p => `G${p.grade} S${p.section}${p.stream ? ` (${p.stream})` : ""}`).join(", ") || "None"}</p><p><strong>Username:</strong> ${teacher.username}</p>`;
+        container.classList.toggle('hidden');
+      }
+      function editTeacher(id) {
+        const teacher = findById(state.teachers, id);
+        if (!teacher) { showError("teacherRegisterMsg", "Teacher not found"); return; }
+        state.isEditingTeacher = true; state.teacherToEdit = teacher;
+        Object.keys(teacher).forEach(key => {
+            const el = document.getElementById(`teacher${key.charAt(0).toUpperCase() + key.slice(1)}`);
+            if (el) el.value = teacher[key] || "";
+        });
+        const pairsContainer = document.getElementById("gradeSectionPairs"); pairsContainer.innerHTML = "";
+        const gradeGroups = {};
+        teacher.gradeSectionPairs.forEach((pair) => {
+          const key = `${pair.grade}-${pair.stream || ""}`;
+          if (!gradeGroups[key]) { gradeGroups[key] = { grade: pair.grade, stream: pair.stream, sections: [] }; }
+          gradeGroups[key].sections.push(pair.section);
+        });
+        Object.values(gradeGroups).forEach((group, index) => {
+          const pairDiv = document.createElement("div"); pairDiv.className = "grade-section-pair";
+          pairDiv.innerHTML = `<label>Grade(s):</label><div class="checkbox-group"><label><input type="checkbox" name="teacherGrade${index}" value="9" ${group.grade === 9 ? "checked" : ""} onchange="updateTeacherSections()"> Grade 9</label><label><input type="checkbox" name="teacherGrade${index}" value="10" ${group.grade === 10 ? "checked" : ""} onchange="updateTeacherSections()"> Grade 10</label><label><input type="checkbox" name="teacherGrade${index}" value="11" ${group.grade === 11 ? "checked" : ""} onchange="updateTeacherSections()"> Grade 11</label><label><input type="checkbox" name="teacherGrade${index}" value="12" ${group.grade === 12 ? "checked" : ""} onchange="updateTeacherSections()"> Grade 12</label></div><label id="streamLabel${index}" ${group.grade >= 11 ? "" : 'class="hidden"'}>Stream for Grade 11/12:</label><select id="stream${index}" ${group.grade >= 11 ? "" : 'class="hidden"'} onchange="updateTeacherSections()"><option value="">Select Stream</option><option value="Natural Science" ${group.stream === "Natural Science" ? "selected" : ""}>Natural Science</option><option value="Social Science" ${group.stream === "Social Science" ? "selected" : ""}>Social Science</option></select><label>Section(s):</label><div class="checkbox-group" id="teacherSection${index}">${config.sections.map((section) => `<label><input type="checkbox" name="teacherSection${index}" value="${section}" ${group.sections.includes(section) ? "checked" : ""} onchange="updateTeacherSections()"> Section ${section}</label>`).join("")}</div><button type="button" class="secondary" style="margin-top: 5px" onclick="removeGradeSectionPair(this)">Remove</button>`;
+          pairsContainer.appendChild(pairDiv);
+        });
+        const addButton = document.createElement("button");
+        addButton.type = "button"; addButton.className = "secondary"; addButton.style.marginTop = "5px";
+        addButton.textContent = "Add Another Grade/Section"; addButton.onclick = addGradeSectionPair;
+        pairsContainer.appendChild(addButton);
+        state.gradeSectionPairs = [...teacher.gradeSectionPairs];
+        document.getElementById("teacherRegisterTitle").textContent = "Edit Teacher Profile";
+        document.getElementById("teacherRegisterBtn").textContent = "Update Profile";
+        updateTeacherSections();
+        showPage("teacherRegisterPage");
+      }
+      function registerRegistrar() {
+        const registrarData = {
+          firstName: document.getElementById("registrarFirstName").value.trim(), middleName: document.getElementById("registrarMiddleName").value.trim(), lastName: document.getElementById("registrarLastName").value.trim(),
+          phone: document.getElementById("registrarPhone").value.trim(), year: document.getElementById("registrarYear").value.trim(), email: document.getElementById("registrarEmail").value.trim(),
+          nationality: document.getElementById("registrarNationality").value.trim(), region: document.getElementById("registrarRegion").value.trim(), zone: document.getElementById("registrarZone").value.trim(),
+          district: document.getElementById("registrarDistrict").value.trim(), kebele: document.getElementById("registrarKebele").value.trim(), gender: document.getElementById("registrarGender").value,
+        };
+        if (!registrarData.firstName || !registrarData.middleName || !registrarData.lastName || !registrarData.phone || !registrarData.year || !registrarData.nationality || !registrarData.region || !registrarData.zone || !registrarData.district || !registrarData.kebele || !registrarData.gender) {
+          showError("registrarRegisterMsg", "Please fill all required fields"); return;
+        }
+        if (!validateName(registrarData.firstName) || !validateName(registrarData.middleName) || !validateName(registrarData.lastName) || !validateName(registrarData.nationality) || !validateName(registrarData.region) || !validateName(registrarData.zone) || !validateName(registrarData.district)) {
+          showError("registrarRegisterMsg", "Names and location fields can only contain letters and spaces"); return;
+        }
+        if (!validatePhone(registrarData.phone)) { showError("registrarRegisterMsg", "Phone number must be 10-15 digits long"); return; }
+        if (!validateEmail(registrarData.email)) { showError("registrarRegisterMsg", "Please enter a valid email address"); return; }
+        
+        const pendingRegistrar = { id: Date.now(), ...registrarData };
+        state.pendingRegistrars.push(pendingRegistrar);
+        saveData();
+        resetRegistrarForm();
+        showPage('loginPage');
+        showSuccess("loginMessage", "Registration submitted. Your application is pending admin approval.");
+      }
+      function resetRegistrarForm() {
+        const fields = ["registrarFirstName", "registrarMiddleName", "registrarLastName", "registrarPhone", "registrarYear", "registrarEmail", "registrarNationality", "registrarRegion", "registrarZone", "registrarDistrict", "registrarKebele", "registrarGender"];
+        fields.forEach(id => document.getElementById(id).value = "");
+      }
+      function renderGenderDistributionTable() {
+        const tbody = document.getElementById("genderDistributionTableBody");
+        const tfoot = document.getElementById("genderDistributionTableFooter");
+        tbody.innerHTML = ""; tfoot.innerHTML = "";
+        const distribution = {};
+        state.students.forEach(student => {
+            const key = `${student.grade}-${student.section}`;
+            if (!distribution[key]) { distribution[key] = { grade: student.grade, section: student.section, male: 0, female: 0, passed: 0, failed: 0 }; }
+            if (student.gender === 'Male') { distribution[key].male++; } else if (student.gender === 'Female') { distribution[key].female++; }
+            if (state.scores.some(s => s.studentId === student.id && s.term === 'Term 1' && s.examType === 'Final') && state.scores.some(s => s.studentId === student.id && s.term === 'Term 2' && s.examType === 'Final')) {
+                const studentSubjects = getSubjectsForGradeLevel(student.grade, student.stream);
+                const term1Results = calculateTermResults(student.id, 'Term 1', student.grade, student.stream);
+                const term2Results = calculateTermResults(student.id, 'Term 2', student.grade, student.stream);
+                let totalAverageSum = 0;
+                studentSubjects.forEach(subject => { totalAverageSum += (term1Results.subjectDetails[subject]?.sum || 0 + term2Results.subjectDetails[subject]?.sum || 0) / 2; });
+                const overallAverage = studentSubjects.length > 0 ? totalAverageSum / studentSubjects.length : 0;
+                if (overallAverage >= 50) { distribution[key].passed++; } else { distribution[key].failed++; }
+            }
+        });
+        const sortedDistribution = Object.values(distribution).sort((a, b) => a.grade - b.grade || a.section.localeCompare(b.section));
+        let totalMale = 0, totalFemale = 0, totalPassed = 0, totalFailed = 0;
+        sortedDistribution.forEach(group => {
+            const total = group.male + group.female;
+            totalMale += group.male; totalFemale += group.female; totalPassed += group.passed; totalFailed += group.failed;
+            const passRate = total > 0 ? ((group.passed / total) * 100).toFixed(1) + '%' : 'N/A';
+            tbody.innerHTML += `<tr><td>${group.grade}</td><td>${group.section}</td><td>${group.male}</td><td>${group.female}</td><td><strong>${total}</strong></td><td class="status-pass">${group.passed}</td><td class="status-fail">${group.failed}</td><td>${passRate}</td></tr>`;
+        });
+        const grandTotal = totalMale + totalFemale;
+        const overallPassRate = grandTotal > 0 ? ((totalPassed / grandTotal) * 100).toFixed(1) + '%' : 'N/A';
+        tfoot.innerHTML = `<tr><th colspan="2">Grand Total</th><th>${totalMale}</th><th>${totalFemale}</th><th>${grandTotal}</th><th>${totalPassed}</th><th>${totalFailed}</th><th>${overallPassRate}</th></tr>`;
+      }
+      function renderStudentsTable(page, context = 'registrar') {
+        const tbody = document.getElementById("registrarStudentsTableBody");
+        const search = document.getElementById("registrarStudentSearch").value.trim().toLowerCase();
+        const filteredStudents = state.students.filter(s => s.id.toString().includes(search) || `${s.firstName} ${s.middleName} ${s.lastName}`.toLowerCase().includes(search)).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        const paginatedStudents = filteredStudents.slice((page - 1) * config.pageSize, page * config.pageSize);
+        tbody.innerHTML = paginatedStudents.map(student => `<tr><td><input type="checkbox" class="student-checkbox" data-id="${student.id}"></td><td>${student.id}</td><td>${student.firstName} ${student.middleName} ${student.lastName}</td><td>${student.grade}</td><td>${student.section}</td><td>${student.phone}</td><td>${student.username}</td><td><button class="primary" onclick="editStudent(${student.id})">Edit</button><button class="secondary" onclick="deleteStudent(${student.id}, '${context}')">Delete</button></td></tr>`).join("");
+        renderPagination("registrarStudentsPagination", filteredStudents.length, page, (p) => renderStudentsTable(p, context));
+      }
+      function renderAdminStudentsTable(page) {
+        const tbody = document.getElementById("adminStudentsTableBody");
+        const search = document.getElementById("adminStudentSearch").value.trim().toLowerCase();
+        const filteredStudents = state.students.filter(s => s.id.toString().includes(search) || `${s.firstName} ${s.middleName} ${s.lastName}`.toLowerCase().includes(search)).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        const paginatedStudents = filteredStudents.slice((page - 1) * config.pageSize, page * config.pageSize);
+        tbody.innerHTML = paginatedStudents.map(student => `<tr><td><input type="checkbox" data-id="${student.id}"></td><td>${student.id}</td><td>${student.firstName} ${student.middleName} ${student.lastName}</td><td>${student.grade}</td><td>${student.section}</td><td>${student.phone}</td><td>${student.username}</td><td><button class="primary" onclick="editStudent(${student.id})">Edit</button><button class="secondary" onclick="deleteStudent(${student.id}, 'admin')">Delete</button></td></tr>`).join("");
+        renderPagination("adminStudentsPagination", filteredStudents.length, page, (p) => renderAdminStudentsTable(p));
+      }
+      function deleteStudent(id, context) {
+        if (!confirm("Are you sure you want to delete this student?")) return;
+        state.students = state.students.filter((s) => s.id !== Number(id));
+        state.scores = state.scores.filter((s) => s.studentId !== Number(id));
+        state.comments = state.comments.filter((c) => c.studentId !== Number(id));
+        saveData(); 
+        if (context === 'registrar') {
+          renderStudentsTable(1, 'registrar'); 
+          renderRegistrarDashboard();
+        } else if (context === 'admin') {
+          renderAdminStudentsTable(1);
+          renderAdminDashboard();
+        }
+      }
+      function deleteSelectedStudents(context = 'registrar') {
+        const tableBodyId = context === 'admin' ? 'adminStudentsTableBody' : 'registrarStudentsTableBody';
+        const checkboxSelector = `#${tableBodyId} input[type="checkbox"][data-id]:checked`;
+        const ids = Array.from(document.querySelectorAll(checkboxSelector)).map(cb => Number(cb.dataset.id));
+        if (ids.length === 0) {
+          alert("Please select at least one student to delete.");
+          return;
+        }
+        if (!confirm(`Are you sure you want to delete the ${ids.length} selected student(s)?`)) return;
+        state.students = state.students.filter((s) => !ids.includes(s.id));
+        state.scores = state.scores.filter((s) => !ids.includes(s.studentId));
+        state.comments = state.comments.filter((c) => !ids.includes(c.studentId));
+        saveData(); 
+        if (context === 'registrar') {
+            renderStudentsTable(1, 'registrar');
+            renderRegistrarDashboard();
+        } else if (context === 'admin') {
+            renderAdminStudentsTable(1);
+            renderAdminDashboard();
+        }
+      }
+      function exportStudents() {
+        const headers = ["ID", "First Name", "Middle Name", "Last Name", "Grade", "Section", "Stream", "Gender", "Phone", "Emergency Name", "Emergency Phone", "Username", "Year", "Email", "Nationality", "Region", "Zone", "District", "Kebele"];
+        const data = state.students.map(s => [s.id, s.firstName, s.middleName, s.lastName, s.grade, s.section, s.stream || "", s.gender, s.phone, s.emergencyName, s.emergencyPhone, s.username, s.year, s.email || "", s.nationality, s.region, s.zone, s.district, s.kebele]);
+        const csv = [headers.join(","), ...data.map((row) => row.join(","))].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = "students.csv"; a.click(); URL.revokeObjectURL(url);
+      }
+      function renderTeachersTable(page) {
+        const tbody = document.getElementById("teachersTableBody");
+        const search = document.getElementById("teacherSearch").value.trim().toLowerCase();
+        const filteredTeachers = state.teachers.filter(t => t.id.toString().includes(search) || `${t.firstName} ${t.lastName}`.toLowerCase().includes(search)).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        const paginatedTeachers = filteredTeachers.slice((page - 1) * config.pageSize, page * config.pageSize);
+        tbody.innerHTML = paginatedTeachers.map(teacher => `<tr><td><input type="checkbox" class="teacher-checkbox" data-id="${teacher.id}"></td><td>${teacher.id}</td><td>${teacher.firstName} ${teacher.middleName} ${teacher.lastName}</td><td>${teacher.phone}</td><td>${teacher.subjectSpecialty}</td><td>${teacher.username}</td><td><button class="primary" onclick="editTeacher(${teacher.id})">Edit</button><button class="secondary" onclick="deleteTeacher(${teacher.id})">Delete</button></td></tr>`).join("");
+        renderPagination("teachersPagination", filteredTeachers.length, page, (p) => renderTeachersTable(p));
+      }
+      function deleteTeacher(id) {
+        if (!confirm("Are you sure you want to delete this teacher?")) return;
+        state.teachers = state.teachers.filter((t) => t.id !== Number(id));
+        state.scores = state.scores.filter((s) => s.teacherId !== Number(id));
+        state.comments = state.comments.filter((c) => c.teacherId !== Number(id) && c.respondedBy !== Number(id));
+        saveData(); renderTeachersTable(1); renderAdminDashboard();
+      }
+      function deleteSelectedTeachers() {
+        const ids = Array.from(document.querySelectorAll("#teachersTableBody .teacher-checkbox:checked")).map(cb => Number(cb.dataset.id));
+        if (ids.length === 0) return;
+        if (!confirm("Are you sure you want to delete the selected teachers?")) return;
+        state.teachers = state.teachers.filter((t) => !ids.includes(t.id));
+        state.scores = state.scores.filter((s) => !ids.includes(s.teacherId));
+        state.comments = state.comments.filter((c) => !ids.includes(c.teacherId) && !ids.includes(c.respondedBy));
+        saveData(); renderTeachersTable(1); renderAdminDashboard();
+      }
+      function renderRegistrarsTable(page) {
+          const tbody = document.getElementById("registrarsTableBody");
+          const search = document.getElementById("registrarSearch").value.trim().toLowerCase();
+          const filtered = state.registrars.filter(r => r.id.toString().includes(search) || `${r.firstName} ${r.lastName}`.toLowerCase().includes(search)).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+          const paginated = filtered.slice((page - 1) * config.pageSize, page * config.pageSize);
+          tbody.innerHTML = paginated.map(reg => `<tr><td><input type="checkbox" class="registrar-checkbox" data-id="${reg.id}"></td><td>${reg.id}</td><td>${reg.firstName} ${reg.middleName} ${reg.lastName}</td><td>${reg.phone}</td><td>${reg.username}</td><td><button class="secondary" onclick="deleteRegistrar(${reg.id})">Delete</button></td></tr>`).join("");
+          renderPagination("registrarsPagination", filtered.length, page, (p) => renderRegistrarsTable(p));
+      }
+      function deleteRegistrar(id) {
+        if (!confirm("Are you sure you want to delete this registrar? This action is permanent.")) return;
+        state.registrars = state.registrars.filter((r) => r.id !== Number(id));
+        saveData();
+        renderRegistrarsTable(1);
+        renderAdminDashboard();
+      }
+      function deleteSelectedRegistrars() {
+          const ids = Array.from(document.querySelectorAll("#registrarsTableBody .registrar-checkbox:checked")).map(cb => Number(cb.dataset.id));
+          if (ids.length === 0) return;
+          if (!confirm("Are you sure you want to delete the selected registrars?")) return;
+          state.registrars = state.registrars.filter((r) => !ids.includes(r.id));
+          saveData();
+          renderRegistrarsTable(1);
+          renderAdminDashboard();
+      }
+      function exportTeachers() {
+        const headers = ["ID", "First Name", "Middle Name", "Last Name", "Gender", "Subject Specialty", "Grade-Section-Stream Pairs", "Username", "Phone", "Year", "Email", "Nationality", "Region", "Zone", "District", "Kebele"];
+        const data = state.teachers.map(t => [t.id, t.firstName, t.middleName, t.lastName, t.gender, t.subjectSpecialty, t.gradeSectionPairs ? t.gradeSectionPairs.map(p => `G${p.grade}-S${p.section}${p.stream ? '-' + p.stream.charAt(0) : ''}`).join(";") : "", t.username, t.phone, t.year, t.email || "", t.nationality, t.region, t.zone, t.district, t.kebele]);
+        const csv = [headers.join(","), ...data.map((row) => row.join(","))].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = "teachers.csv"; a.click(); URL.revokeObjectURL(url);
+      }
+      function renderPagination(containerId, totalItems, currentPage, callback) {
+        const totalPages = Math.ceil(totalItems / config.pageSize);
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        if (totalPages <= 1) return;
+        let buttons = '';
+        buttons += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="(${callback})(${currentPage - 1})">Previous</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            buttons += `<button ${i === currentPage ? 'disabled' : ''} onclick="(${callback})(${i})">${i}</button>`;
+        }
+        buttons += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="(${callback})(${currentPage + 1})">Next</button>`;
+        container.innerHTML = buttons;
+      }
+      function toggleSelectAll(tbodyId, checkboxId) {
+        const selectAll = document.getElementById(checkboxId).checked;
+        document.getElementById(tbodyId).querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = selectAll);
+      }
+      function fillTeacherSubjects() {
+        const grade = Number(document.getElementById("teacherGrade").value);
+        const teacher = findById(state.teachers, state.currentUser.id);
+        const subjectSelect = document.getElementById("teacherSubject");
+        subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+        if (!grade || !teacher) return;
+        const subjects = grade >= 11 ? config.gradeSubjects[grade][teacher.gradeSectionPairs.find((p) => p.grade === grade)?.stream || ""] || [] : config.gradeSubjects[grade] || [];
+        subjects.filter((subject) => subject === teacher.subjectSpecialty).forEach((subject) => { subjectSelect.innerHTML += `<option value="${subject}">${subject}</option>`; });
+      }
+      function populateBehaviorStudentSelects() {
+        const grade = Number(document.getElementById("teacherBehaviorGrade").value);
+        const section = document.getElementById("teacherBehaviorSection").value;
+        const studentSelect = document.getElementById("teacherBehaviorStudentSelect");
+        studentSelect.innerHTML = '<option value="">Select Student</option>';
+        if (!grade || !section) return;
+        const teacher = findById(state.teachers, state.currentUser.id); if (!teacher) return;
+        const stream = teacher.gradeSectionPairs.find((p) => p.grade === grade && p.section === section)?.stream;
+        const students = state.students.filter((s) => s.grade === grade && s.section === section && (s.stream === stream || (!s.stream && !stream))).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        students.forEach((student) => { studentSelect.innerHTML += `<option value="${student.id}">${student.id} — ${student.firstName} ${student.lastName}</option>`; });
+      }
+      function renderStudentScoreTable() {
+        const container = document.getElementById('studentScoresTableContainer'); container.innerHTML = "";
+        const grade = Number(document.getElementById("teacherGrade").value), section = document.getElementById("teacherSection").value, subject = document.getElementById("teacherSubject").value, term = document.getElementById("teacherTerm").value, examType = document.getElementById("teacherExam").value;
+        const teacher = findById(state.teachers, state.currentUser.id);
+        if (!grade || !section || !subject || !term || !examType || !teacher) { container.innerHTML = "<p>Select all options above to load students.</p>"; return; }
+        const stream = teacher.gradeSectionPairs.find((p) => p.grade === grade && p.section === section)?.stream;
+        const students = state.students.filter((s) => s.grade === grade && s.section === section && (s.stream === stream || (!s.stream && !stream))).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+        if (students.length === 0) { container.innerHTML = "<p>No students found for this section.</p>"; return; }
+        let tableHTML = `<table style="margin-top:10px;"><thead><tr><th>ID</th><th>Name</th><th>Score (0-100)</th></tr></thead><tbody>`;
+        students.forEach(student => {
+            const existingScore = state.scores.find(s => s.studentId === student.id && s.subject === subject && s.term === term && s.examType === examType)?.score || "";
+            tableHTML += `<tr><td>${student.id}</td><td>${student.firstName} ${student.lastName}</td><td><input type="number" class="score-input" data-student-id="${student.id}" value="${existingScore}" min="0" max="100" style="width: 80px; text-align: center;" aria-label="Score for ${student.firstName} ${student.lastName}"></td></tr>`;
+        });
+        tableHTML += `</tbody></table><button class="primary" style="margin-top: 10px" onclick="submitAllScores()">Submit/Update All Scores</button>`;
+        container.innerHTML = tableHTML;
+      }
+      function submitAllScores() {
+        if (!config.permissions.scoreSubmission) { showError("teacherMsg", "Score submission is currently disabled"); return; }
+        const grade = Number(document.getElementById("teacherGrade").value), section = document.getElementById("teacherSection").value, subject = document.getElementById("teacherSubject").value, term = document.getElementById("teacherTerm").value, examType = document.getElementById("teacherExam").value;
+        const teacher = findById(state.teachers, state.currentUser.id);
+        if (!grade || !section || !subject || !term || !examType || !teacher) { showError("teacherMsg", "Missing information. Please select all fields."); return; }
+        let updatedCount = 0;
+        document.querySelectorAll('.score-input').forEach(input => {
+            const studentId = Number(input.dataset.studentId);
+            const scoreValue = input.value.trim();
+            if (scoreValue !== "") {
+                const score = Number(scoreValue);
+                if (isNaN(score) || score < 0 || score > 100) { showError("teacherMsg", `Invalid score for student ID ${studentId}. Must be between 0 and 100.`); return; }
+                const student = findById(state.students, studentId); if (!student) return;
+                const existingScore = state.scores.find((s) => s.studentId === studentId && s.subject === subject && s.term === term && s.examType === examType);
+                if (existingScore) { existingScore.score = score; existingScore.timestamp = new Date().toISOString(); existingScore.teacherId = teacher.id; }
+                else { state.scores.push({ id: nextId(state.scores, 1), studentId: studentId, grade, section, stream: student.stream, subject, term, examType, score, teacherId: teacher.id, timestamp: new Date().toISOString() }); }
+                updatedCount++;
+            }
+        });
+        saveData(); showSuccess("teacherMsg", `Successfully submitted/updated ${updatedCount} scores!`); renderStudentScoreTable();
+      }
+      function submitBehaviorGrade() {
+        if (!config.permissions.behaviorGrading) { showError("teacherBehaviorMsg", "Behavior grade submission is currently disabled"); return; }
+        const grade = Number(document.getElementById("teacherBehaviorGrade").value), section = document.getElementById("teacherBehaviorSection").value, studentId = document.getElementById("teacherBehaviorStudentSelect").value, behaviorScore = document.getElementById("teacherBehaviorScore").value, term = document.getElementById("teacherBehaviorTerm").value;
+        const teacher = findById(state.teachers, state.currentUser.id);
+        if (!grade || !section || !studentId || !behaviorScore || !term) { showError("teacherBehaviorMsg", "Please fill all required fields"); return; }
+        const student = findById(state.students, studentId); if (!student) { showError("teacherBehaviorMsg", "Student not found"); return; }
+        if (student.grade !== grade || student.section !== section) { showError("teacherBehaviorMsg", "Student does not belong to selected grade/section"); return; }
+        const teacherPair = teacher.gradeSectionPairs.find((p) => p.grade === grade && p.section === section && ((!p.stream && !student.stream) || p.stream === student.stream));
+        if (!teacherPair) { showError("teacherBehaviorMsg", "You are not assigned to this grade/section/stream"); return; }
+        const existingScore = state.scores.find((s) => s.studentId === Number(studentId) && s.subject === "Behavior" && s.term === term);
+        if (existingScore) { existingScore.score = behaviorScore; existingScore.timestamp = new Date().toISOString(); }
+        else { state.scores.push({ id: nextId(state.scores, 1), studentId: Number(studentId), grade, section, stream: student.stream, subject: "Behavior", term, examType: "Behavior", score: behaviorScore, teacherId: teacher.id, timestamp: new Date().toISOString() }); }
+        saveData(); showSuccess("teacherBehaviorMsg", "Behavior grade submitted successfully!"); document.getElementById("teacherBehaviorScore").value = "";
+      }
+      function viewScores() {
+        const selectedYear = document.getElementById("viewYear").value;
+        const selectedGrade = document.getElementById("viewGrade").value;
+        const selectedTerm = document.getElementById("viewTerm").value;
+        const student = findById(state.students, state.currentUser.id);
+        if (!student) return;
+
+        const tableContainer = document.getElementById("scoresTable");
+        tableContainer.innerHTML = '';
+
+        const renderTermTable = (term, grade, stream, isCurrentGrade) => {
+            const results = calculateTermResults(student.id, term, grade, stream);
+            
+            if (isCurrentGrade) {
+                const allStudentsInSection = state.students.filter(s => s.grade === grade && s.section === student.section && s.stream === stream);
+                if (allStudentsInSection.length > 0) {
+                    const studentTotals = allStudentsInSection.map(s => ({
+                        studentId: s.id,
+                        total: calculateTermResults(s.id, term, grade, stream).total
+                    }));
+                    studentTotals.sort((a, b) => b.total - a.total);
+                    const rank = studentTotals.findIndex(s => s.studentId === student.id) + 1;
+                    results.rank = rank > 0 ? rank : allStudentsInSection.length;
+                }
+            }
+
+            const subjects = getSubjectsForGradeLevel(grade, stream);
+            let tableBody = subjects.length > 0
+                ? subjects.map(subject => {
+                    const scores = results.subjectDetails[subject] || { quiz: 0, assignment: 0, midterm: 0, final: 0, sum: 0 };
+                    return `<tr><td>${subject}</td><td>${scores.quiz}</td><td>${scores.assignment}</td><td>${scores.midterm}</td><td>${scores.final}</td><td><strong>${scores.sum.toFixed(2)}</strong></td></tr>`;
+                }).join('')
+                : '<tr><td colspan="6">No subjects or scores found for this term.</td></tr>';
+
+            return `
+                <h3>Grade ${grade} - ${term} Results</h3>
+                <table>
+                    <thead><tr><th>Subject</th><th>Quiz</th><th>Assignment</th><th>Midterm</th><th>Final</th><th>Sum</th></tr></thead>
+                    <tbody>${tableBody}</tbody>
+                </table>
+                <div class="comment-block">
+                    <p><strong>Total:</strong> ${results.total.toFixed(2)}</p>
+                    <p><strong>Average:</strong> ${results.average.toFixed(2)}</p>
+                    <p><strong>Status:</strong> <span class="status-${results.status.toLowerCase()}">${results.status}</span></p>
+                    ${results.rank ? `<p><strong>Rank:</strong> ${ordinal(results.rank)}</p>` : ''}
+                </div>
+            `;
+        };
+
+        const processGrade = (grade, termOption) => {
+            const pastRecord = state.scores.find(s => s.studentId === student.id && s.grade === grade);
+            const stream = pastRecord ? pastRecord.stream : (grade === student.grade ? student.stream : null);
+            const isCurrentGrade = grade === student.grade;
+
+            let html = '';
+            if (termOption === 'All') {
+                const term1Html = renderTermTable('Term 1', grade, stream, isCurrentGrade);
+                const term2Html = renderTermTable('Term 2', grade, stream, isCurrentGrade);
+                
+                const term1Results = calculateTermResults(student.id, 'Term 1', grade, stream);
+                const term2Results = calculateTermResults(student.id, 'Term 2', grade, stream);
+
+                const overallAverage = (term1Results.average + term2Results.average) / 2;
+                const overallStatus = overallAverage >= 50 ? 'Pass' : 'Fail';
+                
+                html = term1Html + term2Html;
+                if (term1Results.total > 0 && term2Results.total > 0) {
+                  html += `
+                      <h3 style="margin-top: 20px;">Grade ${grade} - Overall Summary</h3>
+                      <div class="comment-block">
+                          <p><strong>Overall Average:</strong> ${overallAverage.toFixed(2)}</p>
+                          <p><strong>Overall Status:</strong> <span class="status-${overallStatus.toLowerCase()}">${overallStatus}</span></p>
+                      </div>`;
+                }
+            } else {
+                html = renderTermTable(termOption, grade, stream, isCurrentGrade);
+            }
+            return html;
+        };
+
+        let studentScores = state.scores.filter(s => s.studentId === student.id);
+        if (studentScores.length === 0) {
+            tableContainer.innerHTML = '<p>No scores available.</p>';
+            return;
+        }
+        const minGradeOfAllTime = Math.min(...studentScores.map(s => s.grade));
+
+        let gradesToProcess = new Set();
+        studentScores.forEach(s => {
+            if (s.subject === 'Behavior') return;
+            
+            const academicYear = student.year + (s.grade - minGradeOfAllTime);
+            if ((selectedYear === 'All' || academicYear == selectedYear) && (selectedGrade === 'All' || s.grade == selectedGrade)) {
+                gradesToProcess.add(s.grade);
+            }
+        });
+        
+        const sortedGrades = [...gradesToProcess].sort((a, b) => a - b);
+
+        if (sortedGrades.length === 0) {
+            tableContainer.innerHTML = '<p>No scores found for the selected criteria.</p>';
+        } else {
+            tableContainer.innerHTML = sortedGrades.map(grade => processGrade(grade, selectedTerm)).join('<hr style="margin: 2rem 0; border-color: var(--border-color);">');
+        }
+      }
+      function viewBehaviorGrades() {
+        const selectedYear = document.getElementById("viewBehaviorYear").value;
+        const selectedGrade = document.getElementById("viewBehaviorGrade").value;
+        const term = document.getElementById("viewBehaviorTerm").value;
+        const student = findById(state.students, state.currentUser.id); if (!student) return;
+
+        const allStudentScores = state.scores.filter(s => s.studentId === student.id);
+        if (allStudentScores.length === 0) {
+            document.getElementById("behaviorTable").innerHTML = `<table><thead><tr><th>School Grade</th><th>Term</th><th>Behavior Grade</th><th>Teacher</th><th>Date</th></tr></thead><tbody><tr><td colspan="5">No behavior grades found.</td></tr></tbody></table>`;
+            return;
+        }
+        const minGradeOfAllTime = Math.min(...allStudentScores.map(s => s.grade));
+        
+        const filteredScores = allStudentScores.filter(s => {
+            if (s.subject !== "Behavior") return false;
+            if (term !== "All" && s.term !== term) return false;
+            if (selectedGrade !== "All" && s.grade != selectedGrade) return false;
+            if (selectedYear !== 'All') {
+                const academicYear = student.year + (s.grade - minGradeOfAllTime);
+                if (academicYear != selectedYear) return false;
+            }
+            return true;
+        }).sort((a, b) => b.grade - a.grade || a.term.localeCompare(b.term));
+
+        const tableHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>School Grade</th>
+                        <th>Term</th>
+                        <th>Behavior Grade</th>
+                        <th>Teacher</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredScores.length > 0 ? filteredScores.map(s => {
+                        const teacher = findById(state.teachers, s.teacherId);
+                        return `<tr>
+                                    <td>${s.grade}</td>
+                                    <td>${s.term}</td>
+                                    <td>${s.score}</td>
+                                    <td>${teacher ? `${teacher.firstName} ${teacher.lastName}` : "Unknown"}</td>
+                                    <td>${new Date(s.timestamp).toLocaleDateString()}</td>
+                                </tr>`;
+                    }).join("") : `<tr><td colspan="5">No behavior grades found for the selected criteria.</td></tr>`}
+                </tbody>
+            </table>`;
+        document.getElementById("behaviorTable").innerHTML = tableHTML;
+      }
+      function exportScores() {
+        if (!config.permissions.reportGeneration) { showError("studentCommentMsg", "Report generation is currently disabled"); return; }
+        const term = document.getElementById("viewTerm").value;
+        const student = findById(state.students, state.currentUser.id); if (!student) return;
+        const scores = state.scores.filter(s => s.studentId === student.id && (term === "All" || s.term === term) && s.examType !== "Behavior").sort((a, b) => a.subject.localeCompare(b.subject) || a.term.localeCompare(b.term));
+        const headers = ["Subject", "Term", "Exam Type", "Score", "Teacher", "Date"];
+        const data = scores.map(s => { const teacher = findById(state.teachers, s.teacherId); return [s.subject, s.term, s.examType, s.score, teacher ? `${teacher.firstName} ${teacher.lastName}` : "Unknown", new Date(s.timestamp).toLocaleDateString()]; });
+        const csv = [headers.join(","), ...data.map((row) => row.join(","))].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = `scores_${student.id}.csv`; a.click(); URL.revokeObjectURL(url);
+      }
+      function populateCommentTeacherSelect() {
+        const student = findById(state.students, state.currentUser.id);
+        const teacherSelect = document.getElementById("commentTeacher");
+        teacherSelect.innerHTML = '<option value="">Select Teacher</option>';
+        if (!student) return;
+        const assignedTeachers = state.teachers.filter(teacher => teacher.gradeSectionPairs.some(pair => pair.grade === student.grade && pair.section === student.section && (pair.stream === student.stream || (!pair.stream && !student.stream))));
+        [...new Map(assignedTeachers.map(t => [t.id, t])).values()].sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)).forEach(teacher => { teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.firstName} ${teacher.lastName} (${teacher.subjectSpecialty})</option>`; });
+      }
+      function sendComment() {
+        if (!config.permissions.commentSystem) { showError("studentCommentMsg", "Comment system is currently disabled"); return; }
+        const teacherId = document.getElementById("commentTeacher").value;
+        const commentText = document.getElementById("studentComment").value.trim();
+        const student = findById(state.students, state.currentUser.id);
+        if (!teacherId || !commentText) { showError("studentCommentMsg", "Please select a teacher and enter a comment"); return; }
+        if (!student || !findById(state.teachers, teacherId)) { showError("studentCommentMsg", "Student or Teacher not found"); return; }
+        state.comments.push({ id: nextId(state.comments, 1), studentId: student.id, teacherId: Number(teacherId), comment: commentText, date: new Date().toISOString(), response: "", responseDate: "", respondedBy: null, status: "Pending" });
+        saveData(); showSuccess("studentCommentMsg", "Comment sent successfully!"); document.getElementById("studentComment").value = ""; renderStudentComments();
+      }
+      function renderStudentComments() {
+        const student = findById(state.students, state.currentUser.id);
+        const commentsList = document.getElementById("studentCommentsList"); if (!student) return;
+        const comments = state.comments.filter((c) => c.studentId === student.id).sort((a, b) => new Date(b.date) - new Date(a.date));
+        commentsList.innerHTML = comments.map(c => { const teacher = findById(state.teachers, c.teacherId); const responder = c.respondedBy ? findById(state.teachers, c.respondedBy) : null; return `<div class="comment-block"><p><strong>To:</strong> ${teacher ? `${teacher.firstName} ${teacher.lastName} (${teacher.subjectSpecialty})` : "Unknown"}</p><p><strong>Comment:</strong> ${c.comment}</p><p><strong>Date:</strong> ${new Date(c.date).toLocaleDateString()}</p><p><strong>Status:</strong> ${c.status}</p>${c.response ? `<div class="response"><p><strong>Response:</strong> ${c.response}</p><p><strong>Responded by:</strong> ${responder ? `${responder.firstName} ${responder.lastName}` : "Unknown"}</p><p><strong>Response Date:</strong> ${new Date(c.responseDate).toLocaleDateString()}</p></div>` : ""}</div>`; }).join("") || "<p>No comments available.</p>";
+      }
+      function renderTeacherComments() {
+        const teacher = findById(state.teachers, state.currentUser.id);
+        const commentsContainer = document.getElementById("teacherCommentsContainer"); if (!teacher) return;
+        const comments = state.comments.filter((c) => c.teacherId === teacher.id && c.status === "Pending").sort((a, b) => new Date(b.date) - new Date(a.date));
+        commentsContainer.innerHTML = comments.map(c => { const student = findById(state.students, c.studentId); return `<div class="comment-block"><p><strong>From:</strong> ${student ? `${student.firstName} ${student.lastName} (G${student.grade}${student.section})` : "Unknown"}</p><p><strong>Comment:</strong> ${c.comment}</p><p><strong>Date:</strong> ${new Date(c.date).toLocaleDateString()}</p><textarea id="response_${c.id}" rows="3" placeholder="Write your response..."></textarea><button class="primary" style="margin-top: 8px" onclick="respondToComment(${c.id})">Respond</button></div>`; }).join("") || "<p>No pending comments.</p>";
+      }
+      function respondToComment(commentId) {
+        const comment = state.comments.find((c) => c.id === Number(commentId));
+        const responseText = document.getElementById(`response_${commentId}`).value.trim();
+        const teacher = findById(state.teachers, state.currentUser.id);
+        if (!comment || !responseText || !teacher) { showError("teacherMsg", "Please enter a response"); return; }
+        comment.response = responseText; comment.responseDate = new Date().toISOString(); comment.respondedBy = teacher.id; comment.status = "Responded";
+        saveData(); showSuccess("teacherMsg", "Response sent successfully!"); renderTeacherComments();
+        if (state.currentUser.role === "admin") { renderCommentsTable(1); }
+      }
+      function renderCommentsTable(page) {
+        const tbody = document.getElementById("commentsTableBody");
+        const filteredComments = state.comments.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const paginatedComments = filteredComments.slice((page - 1) * config.pageSize, page * config.pageSize);
+        tbody.innerHTML = paginatedComments.map(c => { const student = findById(state.students, c.studentId); const teacher = findById(state.teachers, c.teacherId); return `<tr><td>${c.id}</td><td>${student ? `${student.firstName} ${student.lastName}` : "Unknown"}</td><td>${teacher ? `${teacher.firstName} ${teacher.lastName}` : "Unknown"}</td><td>${c.comment}</td><td>${new Date(c.date).toLocaleDateString()}</td><td>${c.status}</td><td><button class="secondary" onclick="deleteComment(${c.id})">Delete</button></td></tr>`; }).join("");
+        renderPagination("commentsPagination", filteredComments.length, page, (p) => renderCommentsTable(p));
+      }
+      function deleteComment(id) {
+        if (!confirm("Are you sure you want to delete this comment?")) return;
+        state.comments = state.comments.filter((c) => c.id !== Number(id));
+        saveData(); renderCommentsTable(1);
+        if (state.currentUser.role === "teacher") renderTeacherComments();
+        if (state.currentUser.role === "student") renderStudentComments();
+      }
+      function renderPendingRegistrationsTable() {
+        const pendingTeachersBody = document.getElementById("pendingTeachersTableBody");
+        pendingTeachersBody.innerHTML = state.pendingTeachers.map(t => `<tr><td>${t.firstName} ${t.lastName}</td><td>${t.subjectSpecialty}</td><td>${t.gradeSectionPairs.map(p => `G${p.grade}S${p.section}`).join(', ')}</td><td>${t.phone}</td><td><button class="primary" onclick="acceptTeacher(${t.id})">Accept</button><button class="secondary" onclick="rejectTeacher(${t.id})">Reject</button></td></tr>`).join('') || '<tr><td colspan="5">No pending teacher registrations.</td></tr>';
+        const pendingRegistrarsBody = document.getElementById("pendingRegistrarsTableBody");
+        pendingRegistrarsBody.innerHTML = state.pendingRegistrars.map(r => `<tr><td>${r.firstName} ${r.lastName}</td><td>${r.phone}</td><td>${r.email || 'N/A'}</td><td><button class="primary" onclick="acceptRegistrar(${r.id})">Accept</button><button class="secondary" onclick="rejectRegistrar(${r.id})">Reject</button></td></tr>`).join('') || '<tr><td colspan="4">No pending registrar registrations.</td></tr>';
+      }
+      function acceptStudent(pendingId) {
+        const pendingStudent = state.pendingStudents.find(s => s.id === pendingId); if (!pendingStudent) return;
+        const id = nextId(state.students, 1000);
+        const username = generateUsername(pendingStudent.firstName, pendingStudent.lastName, "student");
+        state.students.push({ ...pendingStudent, id, username, password: config.defaultPasswords.student });
+        state.pendingStudents = state.pendingStudents.filter(s => s.id !== pendingId); saveData(); renderRegistrarDashboard();
+        showSuccess("registrarPendingMsg", `Student ${pendingStudent.firstName} accepted! Username: ${username}`);
+      }
+      function rejectStudent(pendingId) {
+        if (!confirm("Are you sure?")) return;
+        state.pendingStudents = state.pendingStudents.filter(s => s.id !== pendingId); saveData(); renderRegistrarDashboard();
+        showSuccess("registrarPendingMsg", "Student registration rejected.");
+      }
+      function acceptTeacher(pendingId) {
+        const pendingTeacher = state.pendingTeachers.find(t => t.id === pendingId); if (!pendingTeacher) return;
+        const id = nextId(state.teachers, 2000);
+        const username = generateUsername(pendingTeacher.firstName, pendingTeacher.lastName, "teacher");
+        state.teachers.push({ ...pendingTeacher, id, username, password: config.defaultPasswords.teacher });
+        state.pendingTeachers = state.pendingTeachers.filter(t => t.id !== pendingId); saveData(); renderAdminDashboard();
+        showSuccess("pendingRegMsg", `Teacher ${pendingTeacher.firstName} accepted! Username: ${username}`);
+      }
+      function rejectTeacher(pendingId) {
+        if (!confirm("Are you sure?")) return;
+        state.pendingTeachers = state.pendingTeachers.filter(t => t.id !== pendingId); saveData(); renderAdminDashboard();
+        showSuccess("pendingRegMsg", "Teacher registration rejected.");
+      }
+      function acceptRegistrar(pendingId) {
+        const pendingRegistrar = state.pendingRegistrars.find(r => r.id === pendingId); if (!pendingRegistrar) return;
+        const id = nextId(state.registrars, 3000);
+        const username = generateUsername(pendingRegistrar.firstName, pendingRegistrar.lastName, "registrar");
+        state.registrars.push({ ...pendingRegistrar, id, username, password: config.defaultPasswords.registrar });
+        state.pendingRegistrars = state.pendingRegistrars.filter(r => r.id !== pendingId); saveData(); renderAdminDashboard();
+        showSuccess("pendingRegMsg", `Registrar ${pendingRegistrar.firstName} accepted! Username: ${username}`);
+      }
+      function rejectRegistrar(pendingId) {
+        if (!confirm("Are you sure?")) return;
+        state.pendingRegistrars = state.pendingRegistrars.filter(r => r.id !== pendingId); saveData(); renderAdminDashboard();
+        showSuccess("pendingRegMsg", "Registrar registration rejected.");
+      }
+      function searchUserDetails(event) {
+        event.preventDefault();
+        const userType = document.getElementById('userDetailsType').value;
+        const searchQuery = document.getElementById('userDetailsSearch').value.trim().toLowerCase();
+        const container = document.getElementById('userDetailsContainer');
+        container.innerHTML = '';
+
+        if (!userType || !searchQuery) {
+            container.innerHTML = '<p>Please select a user type and enter a search query.</p>';
+            return;
+        }
+
+        let results = [];
+        if (userType === 'student') results = state.students.filter(s => s.id.toString().includes(searchQuery) || `${s.firstName} ${s.middleName} ${s.lastName}`.toLowerCase().includes(searchQuery));
+        else if (userType === 'teacher') results = state.teachers.filter(t => t.id.toString().includes(searchQuery) || `${t.firstName} ${t.middleName} ${t.lastName}`.toLowerCase().includes(searchQuery));
+        else if (userType === 'registrar') results = state.registrars.filter(r => r.id.toString().includes(searchQuery) || `${r.firstName} ${r.middleName} ${r.lastName}`.toLowerCase().includes(searchQuery));
+
+        if (results.length === 0) { container.innerHTML = '<p>No users found matching your criteria.</p>'; return; }
+
+        results.forEach(user => {
+            let detailsHtml = '';
+            if (userType === 'student') {
+                detailsHtml = `<div class="comment-block"><h3>${user.firstName} ${user.middleName} ${user.lastName} (Student)</h3><p><strong>ID:</strong> ${user.id}</p><p><strong>Username:</strong> ${user.username}</p><p><strong>Grade:</strong> ${user.grade} - ${user.section} ${user.stream ? `(${user.stream})` : ''}</p><p><strong>Gender:</strong> ${user.gender}</p><p><strong>Phone:</strong> ${user.phone}</p><p><strong>Email:</strong> ${user.email || 'N/A'}</p><p><strong>Address:</strong> ${user.region}, ${user.zone}, ${user.district}, Kebele ${user.kebele}</p><p><strong>Nationality:</strong> ${user.nationality}</p><p><strong>Emergency Contact:</strong> ${user.emergencyName} (${user.emergencyPhone})</p></div>`;
+            } else if (userType === 'teacher') {
+                detailsHtml = `<div class="comment-block"><h3>${user.firstName} ${user.middleName} ${user.lastName} (Teacher)</h3><p><strong>ID:</strong> ${user.id}</p><p><strong>Username:</strong> ${user.username}</p><p><strong>Subject Specialty:</strong> ${user.subjectSpecialty}</p><p><strong>Gender:</strong> ${user.gender}</p><p><strong>Phone:</strong> ${user.phone}</p><p><strong>Email:</strong> ${user.email || 'N/A'}</p><p><strong>Address:</strong> ${user.region}, ${user.zone}, ${user.district}, Kebele ${user.kebele}</p><p><strong>Nationality:</strong> ${user.nationality}</p><p><strong>Assignments:</strong> ${user.gradeSectionPairs?.map(p => `Grade ${p.grade} Section ${p.section}${p.stream ? ` (${p.stream})` : ''}`).join(', ') || 'None'}</p></div>`;
+            } else { // Registrar
+                 detailsHtml = `<div class="comment-block"><h3>${user.firstName} ${user.middleName} ${user.lastName} (Registrar)</h3><p><strong>ID:</strong> ${user.id}</p><p><strong>Username:</strong> ${user.username}</p><p><strong>Gender:</strong> ${user.gender}</p><p><strong>Phone:</strong> ${user.phone}</p><p><strong>Email:</strong> ${user.email || 'N/A'}</p><p><strong>Address:</strong> ${user.region}, ${user.zone}, ${user.district}, Kebele ${user.kebele}</p><p><strong>Nationality:</strong> ${user.nationality}</p></div>`;
+            }
+            container.innerHTML += detailsHtml;
+        });
+    }
+      function togglePromoStreamFilter(context = 'registrar') {
+        const grade = document.getElementById('registrarPromoGradeFilter').value;
+        document.getElementById('registrarPromoStreamFilterContainer').classList.toggle("hidden", grade !== "11" && grade !== "12");
+        if (grade !== "11" && grade !== "12") document.getElementById('registrarPromoStreamFilter').value = ""; 
+      }
+      function populatePromoSectionFilter(context = 'registrar') {
+          const sectionFilter = document.getElementById('registrarPromoSectionFilter');
+          sectionFilter.innerHTML = '<option value="">All Sections</option>';
+          config.sections.forEach(section => { sectionFilter.innerHTML += `<option value="${section}">Section ${section}</option>`; });
+      }
+      function clearPromotionSearch(context = 'registrar') { 
+          document.getElementById('registrarPromotionSearchForm').reset(); 
+          togglePromoStreamFilter(context); 
+          renderPromotionTable(false, context); 
+      }
+      function renderPromotionTable(isSearchTriggered = false, context = 'registrar') {
+        const tbody = document.getElementById('registrarPromotionTableBody'); 
+        if (!tbody) return;
+        if (!isSearchTriggered) { tbody.innerHTML = '<tr><td colspan="7">Enter search criteria and click Search.</td></tr>'; return; }
+        tbody.innerHTML = '';
+        const idSearch = document.getElementById('registrarPromoStudentIdSearch').value.trim();
+        const gradeFilter = document.getElementById('registrarPromoGradeFilter').value;
+        const sectionFilter = document.getElementById('registrarPromoSectionFilter').value;
+        const streamFilter = document.getElementById('registrarPromoStreamFilter').value;
+        
+        let eligibleStudents = state.students.filter(s => state.scores.some(sc => sc.studentId === s.id && sc.term === 'Term 1' && sc.examType === 'Final') && state.scores.some(sc => sc.studentId === s.id && sc.term === 'Term 2' && sc.examType === 'Final'));
+        if (idSearch) eligibleStudents = eligibleStudents.filter(s => s.id.toString().includes(idSearch));
+        if (gradeFilter) eligibleStudents = eligibleStudents.filter(s => s.grade === Number(gradeFilter));
+        if (sectionFilter) eligibleStudents = eligibleStudents.filter(s => s.section === sectionFilter);
+        if (streamFilter) eligibleStudents = eligibleStudents.filter(s => s.stream === streamFilter);
+        if (eligibleStudents.length === 0) { tbody.innerHTML = '<tr><td colspan="7">No eligible students match criteria.</td></tr>'; return; }
+
+        eligibleStudents.forEach(student => {
+            const t1Avg = calculateTermResults(student.id, 'Term 1', student.grade, student.stream).average;
+            const t2Avg = calculateTermResults(student.id, 'Term 2', student.grade, student.stream).average;
+            const overallAverage = (t1Avg + t2Avg) / 2;
+            const status = overallAverage >= 50 ? 'Pass' : 'Fail';
+            const newSectionSelect = `<select id="newSection_${student.id}" class="small-input">${config.sections.map(s => `<option value="${s}">${s}</option>`).join('')}</select>`;
+            let streamSelect = status === 'Pass' && student.grade === 10 ? `<select id="newStream_${student.id}" class="small-input" required><option value="">Stream</option><option value="Natural Science">Natural</option><option value="Social Science">Social</option></select>` : '';
+            let actionButton = status === 'Pass' && student.grade === 12 ? `<button class="primary" onclick="graduateStudent(${student.id}, '${context}')">Graduate</button>` : `<button class="primary" onclick="promoteOrReregisterStudent(${student.id}, '${context}')">${status === 'Pass' ? 'Promote' : 'Re-register'}</button>`;
+            tbody.innerHTML += `<tr><td>${student.id}</td><td>${student.firstName} ${student.lastName}</td><td>${student.grade}-${student.section}${student.stream ? ` (${student.stream.charAt(0)})` : ''}</td><td>${overallAverage.toFixed(2)}</td><td class="status-${status.toLowerCase()}">${status}</td><td>${newSectionSelect} ${streamSelect}</td><td>${actionButton}</td></tr>`;
+        });
+      }
+      function promoteOrReregisterStudent(studentId, context) {
+          const student = findById(state.students, studentId); if (!student) return;
+          const newSection = document.getElementById(`newSection_${student.id}`).value;
+          const overallAverage = (calculateTermResults(student.id, 'Term 1', student.grade, student.stream).average + calculateTermResults(student.id, 'Term 2', student.grade, student.stream).average) / 2;
+          const status = overallAverage >= 50 ? 'Pass' : 'Fail';
+          if (status === 'Pass') {
+              student.grade += 1;
+              if (student.grade === 11) {
+                  const newStreamEl = document.getElementById(`newStream_${student.id}`);
+                  if (!newStreamEl || !newStreamEl.value) { student.grade -= 1; return; }
+                  student.stream = newStreamEl.value;
+              } else if (student.grade < 11) { student.stream = ""; }
+          }
+          student.section = newSection;
+          state.scores = state.scores.filter(s => s.studentId !== studentId);
+          saveData(); 
+          showSuccess("registrarPendingMsg", `Student ${student.firstName} has been ${status === 'Pass' ? 'promoted' : 're-registered'}.`);
+          renderPromotionTable(true, context); renderStudentsTable(1, context); renderAdminDashboard();
+      }
+      function graduateStudent(studentId, context) {
+          if (!confirm('Are you sure you want to graduate this student? This will remove their records.')) return;
+          const student = findById(state.students, studentId);
+          state.students = state.students.filter(s => s.id !== studentId);
+          state.scores = state.scores.filter(s => s.studentId !== studentId);
+          state.comments = state.comments.filter(c => c.studentId !== studentId);
+          saveData(); 
+          showSuccess("registrarPendingMsg", `Student ${student.firstName} has been graduated.`);
+          renderPromotionTable(true, context); renderStudentsTable(1, context); renderAdminDashboard();
+      }
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        if (state.currentUser) { showPage(`${state.currentUser.role}Page`); }
+        else { showPage("loginPage"); }
+      });
+    </script>
+  </body>
+</html>
